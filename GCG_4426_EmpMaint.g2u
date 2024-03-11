@@ -1,0 +1,881 @@
+Program.Sub.ScreenSU.Start
+Gui.F_EmpMaint..Create
+Gui.F_EmpMaint..Caption("Employee Maintenance")
+Gui.F_EmpMaint..Size(15360,10695)
+Gui.F_EmpMaint..MinX(0)
+Gui.F_EmpMaint..MinY(0)
+Gui.F_EmpMaint..Position(0,0)
+Gui.F_EmpMaint..BackColor(-2147483633)
+Gui.F_EmpMaint..MousePointer(0)
+Gui.F_EmpMaint..Event(UnLoad,F_EmpMaint_UnLoad)
+Gui.F_EmpMaint.TabEmployee.Create(Tab)
+Gui.F_EmpMaint.TabEmployee.Size(14745,8955)
+Gui.F_EmpMaint.TabEmployee.Position(195,1035)
+Gui.F_EmpMaint.TabEmployee.Tabs(3)
+Gui.F_EmpMaint.TabEmployee.SetTab(0)
+Gui.F_EmpMaint.TabEmployee.Caption("Adding Documents")
+Gui.F_EmpMaint.TabEmployee.SetTab(1)
+Gui.F_EmpMaint.TabEmployee.Caption("Document Maintenance")
+Gui.F_EmpMaint.TabEmployee.SetTab(2)
+Gui.F_EmpMaint.TabEmployee.Caption("View Progress")
+Gui.F_EmpMaint.gccAdding.Create(GsGridControl)
+Gui.F_EmpMaint.gccAdding.Size(14160,6015)
+Gui.F_EmpMaint.gccAdding.Position(270,1710)
+Gui.F_EmpMaint.gccAdding.Parent("TabEmployee",0)
+Gui.F_EmpMaint.gccAdding.Event(RowCellClick,gccAdding_RowCellClick)
+Gui.F_EmpMaint.ddlAddCat.Create(DropDownList)
+Gui.F_EmpMaint.ddlAddCat.Size(2565,330)
+Gui.F_EmpMaint.ddlAddCat.Position(255,420)
+Gui.F_EmpMaint.ddlAddCat.Parent("TabEmployee",0)
+Gui.F_EmpMaint.cmdAddCat.Create(Button)
+Gui.F_EmpMaint.cmdAddCat.Size(1440,375)
+Gui.F_EmpMaint.cmdAddCat.Position(3135,405)
+Gui.F_EmpMaint.cmdAddCat.Caption("Add Category")
+Gui.F_EmpMaint.cmdAddCat.Parent("TabEmployee",0)
+Gui.F_EmpMaint.cmdAddCat.Event(Click,cmdAddCat_Click)
+Gui.F_EmpMaint.lblCat.Create(Label,"Category",True,1935,255,0,330,210,True,0,"Arial",8,-2147483633,0)
+Gui.F_EmpMaint.lblCat.Parent("TabEmployee",0)
+Gui.F_EmpMaint.lblDoc.Create(Label,"Document",True,1500,255,0,330,945,True,0,"Arial",8,-2147483633,0)
+Gui.F_EmpMaint.lblDoc.Parent("TabEmployee",0)
+Gui.F_EmpMaint.txtDoc.Create(TextBox,"",True,1500,300,0,300,1155,True,0,"Arial",8,-2147483643,1)
+Gui.F_EmpMaint.txtDoc.Parent("TabEmployee",0)
+Gui.F_EmpMaint.txtDoc2.Create(TextBox,"",True,5235,300,0,2895,1155,True,0,"Arial",8,-2147483643,1)
+Gui.F_EmpMaint.txtDoc2.Parent("TabEmployee",0)
+Gui.F_EmpMaint.lblDoc2.Create(Label,"Document Description",True,2085,255,0,2940,945,True,0,"Arial",8,-2147483633,0)
+Gui.F_EmpMaint.lblDoc2.Parent("TabEmployee",0)
+Gui.F_EmpMaint.cmdDocBrowse.Create(Button)
+Gui.F_EmpMaint.cmdDocBrowse.Size(375,375)
+Gui.F_EmpMaint.cmdDocBrowse.Position(8250,1110)
+Gui.F_EmpMaint.cmdDocBrowse.Parent("TabEmployee",0)
+Gui.F_EmpMaint.cmdDocBrowse.Caption("^")
+Gui.F_EmpMaint.cmdDocBrowse.Event(Click,cmdDocBrowse_Click)
+Gui.F_EmpMaint.cmdAddDoc.Create(Button)
+Gui.F_EmpMaint.cmdAddDoc.Size(1605,375)
+Gui.F_EmpMaint.cmdAddDoc.Position(8985,1125)
+Gui.F_EmpMaint.cmdAddDoc.Parent("TabEmployee",0)
+Gui.F_EmpMaint.cmdAddDoc.Caption("Add Document")
+Gui.F_EmpMaint.cmdAddDoc.Event(Click,cmdAddDoc_Click)
+Gui.F_EmpMaint.cmdSaveAdd.Create(Button)
+Gui.F_EmpMaint.cmdSaveAdd.Size(1815,375)
+Gui.F_EmpMaint.cmdSaveAdd.Position(12570,7905)
+Gui.F_EmpMaint.cmdSaveAdd.Parent("TabEmployee",0)
+Gui.F_EmpMaint.cmdSaveAdd.Caption("Save and Close")
+Gui.F_EmpMaint.cmdSaveAdd.Event(Click,cmdSaveAdd_Click)
+Gui.F_EmpMaint.gccDeleteDoc.Create(GsGridControl)
+Gui.F_EmpMaint.gccDeleteDoc.Size(14265,7515)
+Gui.F_EmpMaint.gccDeleteDoc.Position(180,375)
+Gui.F_EmpMaint.gccDeleteDoc.Parent("TabEmployee",1)
+Gui.F_EmpMaint.gccDeleteDoc.Event(RowCellClick,gccDeleteDoc_RowCellClick)
+Gui.F_EmpMaint.cmdSaveDeletion.Create(Button)
+Gui.F_EmpMaint.cmdSaveDeletion.Size(1740,375)
+Gui.F_EmpMaint.cmdSaveDeletion.Position(12615,7995)
+Gui.F_EmpMaint.cmdSaveDeletion.Parent("TabEmployee",1)
+Gui.F_EmpMaint.cmdSaveDeletion.Caption("Save and Close")
+Gui.F_EmpMaint.cmdSaveDeletion.Event(Click,cmdSaveDeletion_Click)
+Gui.F_EmpMaint.txtDocId.Create(TextBox,"",False,1215,300,0,12930,675,True,0,"Arial",8,-2147483643,1)
+Gui.F_EmpMaint.txtDocId.Parent("TabEmployee",0)
+Gui.F_EmpMaint.gccProgressView.Create(GsGridControl)
+Gui.F_EmpMaint.gccProgressView.Size(14265,8160)
+Gui.F_EmpMaint.gccProgressView.Position(150,210)
+Gui.F_EmpMaint.gccProgressView.Parent("TabEmployee",2)
+Gui.F_EmpMaint.txtRev.Create(TextBox,"",True,615,300,0,2040,1155,True,0,"Arial",8,-2147483643,1)
+Gui.F_EmpMaint.txtRev.Parent("TabEmployee",0)
+Gui.F_EmpMaint.lblRev.Create(Label,"Rev",True,660,255,0,2055,945,True,0,"Arial",8,-2147483633,0)
+Gui.F_EmpMaint.lblRev.Parent("TabEmployee",0)
+Gui.F_EmpMaint.txtCatID.Create(TextBox,"",False,1215,300,0,8655,375,True,0,"Arial",8,-2147483643,1)
+Gui.F_EmpMaint.txtCatID.Parent("TabEmployee",0)
+Gui.F_EmpMaint.txtEmployee.Create(TextBox,"",True,3330,300,0,255,465,True,0,"Arial",8,-2147483643,1)
+Gui.F_EmpMaint.txtEmployee.Event(LostFocus,txtEmployee_LostFocus)
+Gui.F_EmpMaint.lblEmployee.Create(Label,"Employee",True,1935,255,0,255,255,True,0,"Arial",8,-2147483633,0)
+Gui.F_EmpMaint.cmdEmployee.Create(Button)
+Gui.F_EmpMaint.cmdEmployee.Size(375,375)
+Gui.F_EmpMaint.cmdEmployee.Position(3675,405)
+Gui.F_EmpMaint.cmdEmployee.Caption("^")
+Gui.F_EmpMaint.cmdEmployee.Event(Click,cmdEmployee_Click)
+Gui.F_EmpMaint.txtEmpID.Create(TextBox,"",False,1215,300,0,4515,450,True,0,"Arial",8,-2147483643,1)
+Gui.F_EmpMaint.txtSup.Create(TextBox,"",True,3315,300,0,4440,465,True,0,"Arial",8,-2147483643,1)
+Gui.F_EmpMaint.lbl1.Create(Label,"Supervisor",True,1935,255,0,4485,255,True,0,"Arial",8,-2147483633,0)
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+V.Global.iDocId.Declare(Long)
+
+Program.Sub.Preflight.End
+
+Program.Sub.cmdEmployee_Click.Start
+F.Intrinsic.Control.SetErrorHandler("cmdEmployee_Click_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local..BulkDeclareString(sError, sRet, sSup)
+
+'Mini browser mode 50 to select an employee
+F.Intrinsic.UI.MiniBrowser(50, "", V.Local.sRet)
+
+F.Intrinsic.Control.If(V.Local.sRet, <>, "***CANCEL***")
+	F.Intrinsic.String.Split(V.Local.sRet, "*!*", V.Local.sRet)
+	
+	F.Intrinsic.String.Build("Select TOP 1 SUPERVISOR from GCG_4426_EMP_DOCS where RTRIM(LTRIM(EMPLOYEE)) = '{0}'", V.Local.sRet(0).Trim, V.Local.sSup)
+	F.ODBC.Connection!conx.ExecuteAndReturn(V.Local.sSup, V.Local.sSup)
+	
+	Gui.F_EmpMaint.txtSup.Text(V.Local.sSup.Trim)
+	Gui.F_EmpMaint.txtEmployee.Text(V.Local.sRet(1).trim)
+	Gui.F_EmpMaint.txtEmpID.Text(V.Local.sRet(0).trim)
+	Gui.F_EmpMaint.txtCatID.Text("")
+	Gui.F_EmpMaint.txtDoc.Text("")
+	Gui.F_EmpMaint.txtDoc2.Text("")
+	Gui.F_EmpMaint.txtDocId.Text("")
+	Gui.F_EmpMaint.txtRev.Text("")
+	Gui.F_EmpMaint.ddlAddCat.Text("")
+	
+	Gui.F_EmpMaint.gccAdding.SuspendLayout
+	Gui.F_EmpMaint.gccDeleteDoc.SuspendLayout
+	Gui.F_EmpMaint.gccProgressView.SuspendLayout
+	
+	F.Intrinsic.Control.CallSub(PopAddTab, "sEmp", V.Local.sRet(0))
+	F.Intrinsic.Control.CallSub(PopMaintTab, "sEmp", V.Local.sRet(0))	
+	F.Intrinsic.Control.CallSub(PopViewTab, "sEmp", V.Local.sRet(0))
+	
+	Gui.F_EmpMaint.gccAdding.ResumeLayout
+	Gui.F_EmpMaint.gccDeleteDoc.ResumeLayout
+	Gui.F_EmpMaint.gccProgressView.ResumeLayout
+	
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("cmdEmployee_Click_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_EmpMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+Program.Sub.cmdEmployee_Click.End
+
+Program.Sub.txtEmployee_LostFocus.Start
+F.Intrinsic.Control.SetErrorHandler("txtEmployee_LostFocus_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local..BulkDeclareString(sError, sEmpID, ssSup)
+
+'Populates data in the case that the user typed in the employee instead of using the browser
+V.Local.sEmpID.Set(V.Dictionary.DicEmpNo![V.Screen.F_EmpMaint!txtEmployee.Text])
+
+F.Intrinsic.Control.If(V.Local.sEmpID, =, "-1")
+	Gui.F_EmpMaint.cmdAddCat.Enabled(False)
+	Gui.F_EmpMaint.cmdAddDoc.Enabled(False)
+	Gui.F_EmpMaint.cmdDocBrowse.Enabled(False)
+F.Intrinsic.Control.Else
+	Gui.F_EmpMaint.cmdAddCat.Enabled(True)
+	Gui.F_EmpMaint.cmdAddDoc.Enabled(True)
+	Gui.F_EmpMaint.cmdDocBrowse.Enabled(True)	
+F.Intrinsic.Control.EndIf
+
+Gui.F_EmpMaint.txtEmpID.Text(V.Local.sEmpID)
+
+F.Intrinsic.String.Build("Select TOP 1 SUPERVISOR from GCG_4426_EMP_DOCS where EMPLOYEE = '{0}'", V.Local.sEmpID, V.Local.sSup)
+F.ODBC.Connection!conx.ExecuteAndReturn(V.Local.sSup, V.Local.sSup)
+Gui.F_EmpMaint.txtSup.Text(V.Local.sSup.Trim)
+
+Gui.F_EmpMaint.gccAdding.SuspendLayout
+Gui.F_EmpMaint.gccDeleteDoc.SuspendLayout
+Gui.F_EmpMaint.gccProgressView.SuspendLayout
+
+F.Intrinsic.Control.CallSub(PopAddTab, "sEmp", V.Local.sEmpID)
+F.Intrinsic.Control.CallSub(PopMaintTab, "sEmp", V.Local.sEmpID)	
+F.Intrinsic.Control.CallSub(PopViewTab, "sEmp", V.Local.sEmpID)
+
+Gui.F_EmpMaint.gccAdding.ResumeLayout
+Gui.F_EmpMaint.gccDeleteDoc.ResumeLayout
+Gui.F_EmpMaint.gccProgressView.ResumeLayout
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("txtEmployee_LostFocus_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_EmpMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(f_empmaint_unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.txtEmployee_LostFocus.End
+
+Program.Sub.cmdAddCat_Click.Start
+F.Intrinsic.Control.SetErrorHandler("cmdAddCat_Click_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local..BulkDeclareString(sError, sRet, sSql, sExpression, sEmpNo)
+V.Local.iCount.Declare(Long)
+
+'We add a category to the selected employee here
+F.Intrinsic.Control.If(V.Screen.F_EmpMaint!ddlAddCat.Value, =, "")
+	F.Intrinsic.UI.Msgbox("Please select a category from the drop down list", "No Category Selected")
+	F.Intrinsic.Control.ExitSub
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.String.Build("[EMPLOYEE] = '{0}' and [CAT_ID] = {1}", V.Screen.F_EmpMaint!txtEmpID.Text, V.Dictionary.DicCatID![V.Screen.F_EmpMaint!ddlAddCat.Value], V.Local.sExpression)
+F.Data.DataTable.Select("EmpCatTable", V.Local.sExpression, V.Local.sRet)
+F.Intrinsic.Control.If(V.Local.sret, <>, "***NORETURN***")
+	F.Intrinsic.UI.Msgbox("Category selected has already been added to employee", "Category addition error")
+	Gui.F_EmpMaint.ddlAddCat.Text("")
+	F.Intrinsic.Control.ExitSub
+F.Intrinsic.Control.EndIf
+
+F.Data.DataTable.AddRow("CatTable", "EMPLOYEE", V.Screen.F_EmpMaint!txtEmpID.Text, "CAT_ID", V.Dictionary.DicCatID![V.Screen.F_EmpMaint!ddlAddCat.Value], "Cat_Name", V.Screen.F_EmpMaint!ddlAddCat.Value, "RemoveP", "False")
+F.Data.DataTable.AddRow("EmpCatTable", "EMPLOYEE", V.Screen.F_EmpMaint!txtEmpID.Text, "CAT_ID", V.Dictionary.DicCatID![V.Screen.F_EmpMaint!ddlAddCat.Value])
+
+'Adding the category means adding all documents associated with that category that have not been already assigned
+F.Intrinsic.String.Build("Select DOC_ID, DOC_TITLE, DOC_REV, DOC_DESCRIPTION from GCG_4426_DOCUMENTS where INACTIVE_FLAG = '0' and CAT_ID = '{0}'", V.Dictionary.DicCatID![V.Screen.F_EmpMaint!ddlAddCat.Value], V.Local.sSql)
+F.Data.DataTable.CreateFromSQL("DocsToAdd", "conx", V.Local.sSql, True)
+
+F.Data.Dictionary.CreateFromDataView("AddedDic", "CatTable$EmpDocsTable", "EmpDocsView", "DOC_ID", "EMPLOYEE")
+F.Data.Dictionary.SetDefaultReturn("AddedDic", "T")
+F.Data.DataTable.AddColumn("DocsToAdd", "Flag", "String")
+F.Data.DataTable.FillFromDictionary("DocsToAdd", "AddedDic", "DOC_ID", "Flag")
+F.Data.Dictionary.Close("AddedDic")
+
+F.Data.DataView.Create("DocsToAdd", "DocsToAddView", 22, "[Flag] = 'T'", "DOC_ID ASC")
+
+F.Intrinsic.Control.For(V.Local.iCount, 0, V.DataView.DocsToAdd!DocsToAddView.RowCount--, 1)
+	F.Intrinsic.Math.Add(V.Global.iDocId, 1, V.Global.iDocId)
+	F.Data.DataTable.AddRow("CatTable$EmpDocsTable", "EMPLOYEE", V.Screen.F_EmpMaint!txtEmpID.Text, "DOC_ID", V.DataView.DocsToAdd!DocsToAddView(V.Local.iCount).DOC_ID!FieldValTrim, "CAT_ID", V.Dictionary.DicCatID![V.Screen.F_EmpMaint!ddlAddCat.Value], "LINK_ID", V.Global.iDocId, "Doc_Title", V.DataView.DocsToAdd!DocsToAddView(V.Local.iCount).DOC_TITLE!FieldValTrim, "Doc_Rev", V.DataView.DocsToAdd!DocsToAddView(V.Local.iCount).DOC_REV!FieldValTrim, "Doc_Description", V.DataView.DocsToAdd!DocsToAddView(V.Local.iCount).DOC_DESCRIPTION!FieldValTrim, "CAT_NAME", V.Screen.F_EmpMaint!ddlAddCat.Value, "COMPLETED_FLAG", "False", "Remove", "False", "SUPERVISOR", V.Screen.F_EmpMaint!txtSup.Text.trim)
+F.Intrinsic.Control.Next(V.Local.iCount)
+
+Gui.F_EmpMaint.ddlAddCat.Text("")
+F.Data.DataTable.Close("DocsToAdd")
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("cmdAddCat_Click_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_EmpMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(f_empmaint_unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.cmdAddCat_Click.End
+
+Program.Sub.cmdAddDoc_Click.Start
+F.Intrinsic.Control.SetErrorHandler("cmdAddDoc_Click_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local..BulkDeclareString(sError, sRet, sExpression, sID)
+
+'We are assigning documents to employees here. 
+F.Intrinsic.Control.If(V.Screen.F_EmpMaint!txtDoc.Text.Trim, =, "")
+	F.Intrinsic.UI.Msgbox("Please select a document to add to the Employee", "No Document Selected")
+	F.Intrinsic.Control.ExitSub
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.String.Build("[EMPLOYEE] = '{0}' and [DOC_ID] = {1}", V.Screen.F_EmpMaint!txtEmpID.Text, V.Screen.F_EmpMaint!txtDocId.Text, V.Local.sExpression)
+F.Data.DataTable.Select("CatTable$EmpDocsTable", V.Local.sExpression, V.Local.sRet)
+F.Intrinsic.Control.If(V.Local.sret, <>, "***NORETURN***")
+	F.Intrinsic.UI.Msgbox("File selected has already been added to employee", "File addition error")
+	Gui.F_EmpMaint.txtDoc.Text("")
+	Gui.F_EmpMaint.txtDoc2.Text("")
+	Gui.F_EmpMaint.txtRev.Text("")
+	Gui.F_EmpMaint.txtDocId.Text("")
+	F.Intrinsic.Control.ExitSub
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.String.Build("[EMPLOYEE] = '{0}' and [CAT_ID] = {1}", V.Screen.F_EmpMaint!txtEmpID.Text, V.Dictionary.DicCatID![V.Screen.F_EmpMaint!txtCatID.Text], V.Local.sExpression)
+F.Data.DataTable.Select("CatTable", V.Local.sExpression, V.Local.sRet)
+F.Intrinsic.Control.If(V.Local.sRet, =, "***NORETURN***")
+	F.Data.Datatable.AddRow("CatTable", "EMPLOYEE", V.Screen.F_EmpMaint!txtEmpID.Text, "CAT_ID", V.Dictionary.DicCatID![V.Screen.F_EmpMaint!txtCatID.Text], "RemoveP", "False")
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Math.Add(V.Global.iDocId, 1, V.Global.iDocId)
+
+F.Data.DataTable.AddRow("CatTable$EmpDocsTable", "EMPLOYEE", V.Screen.F_EmpMaint!txtEmpID.Text, "DOC_ID", V.Screen.F_EmpMaint!txtDocId.Text, "CAT_ID", V.Dictionary.DicCatID![V.Screen.F_EmpMaint!txtCatID.Text], "LINK_ID", V.Global.iDocId, "Doc_Title", V.Screen.F_EmpMaint!txtDoc.Text, "Doc_Rev", V.Screen.F_EmpMaint!txtRev.Text, "Doc_Description", V.Screen.F_EmpMaint!txtDoc2.Text, "CAT_NAME", V.Screen.F_EmpMaint!txtCatID.Text, "COMPLETED_FLAG", "False", "Remove", "False")
+
+Gui.F_EmpMaint.txtDoc.Text("")
+Gui.F_EmpMaint.txtDoc2.Text("")
+Gui.F_EmpMaint.txtRev.Text("")
+Gui.F_EmpMaint.txtDocId.Text("")
+
+Gui.F_EmpMaint.gccAdding.SuspendLayout
+
+F.Data.DataView.Close("CatTable$EmpDocsTable", "EmpDocsView")
+F.Intrinsic.Control.CallSub(PopAddtab, "sEmp", V.Screen.F_EmpMaint!txtEmpID.Text.Trim)
+Gui.F_EmpMaint.gccAdding.MainView("EmpDocsGrid")
+
+Gui.F_EmpMaint.gccAdding.ResumeLayout
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("cmdAddDoc_Click_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_EmpMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(f_empmaint_unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.cmdAddDoc_Click.End
+
+Program.Sub.cmdDocBrowse_Click.Start
+F.Intrinsic.Control.SetErrorHandler("cmdDocBrowse_Click_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local..BulkDeclareString(sError, sRet, sSql, sTitles)
+V.Local.iWidths.Declare(Long)
+
+F.Intrinsic.String.Split("ID*!*Document*!*Rev*!*Description*!*Category", "*!*", V.Local.sTitles)
+F.Intrinsic.String.Split("150*!*500*!*300*!*1500*!*500", "*!*", V.Local.iWidths)
+
+'Create a browser for the Documents available
+V.Local.sSql.Set("Select GCG_4426_DOCUMENTS.DOC_ID, GCG_4426_DOCUMENTS.DOC_TITLE, GCG_4426_DOCUMENTS.DOC_REV, GCG_4426_DOCUMENTS.DOC_DESCRIPTION, GCG_4426_CATEGORIES.CAT_NAME from GCG_4426_DOCUMENTS left join GCG_4426_CATEGORIES on GCG_4426_DOCUMENTS.CAT_ID = GCG_4426_CATEGORIES.CAT_ID where GCG_4426_DOCUMENTS.INACTIVE_FLAG = '0' and GCG_4426_CATEGORIES.INACTIVE_FLAG = '0'")
+
+F.Intrinsic.UI.Browser("Documents", "conx", V.Local.sSql, V.Local.sTitles, V.Local.iWidths, V.Local.sRet)
+
+F.Intrinsic.Control.If(V.Local.sRet.Trim, <>, "***CANCEL***")
+	F.Intrinsic.String.Split(V.Local.sRet, "*!*", V.Local.sRet)
+	Gui.F_EmpMaint.txtDocId.Text(V.Local.sRet(0))
+	Gui.F_EmpMaint.txtDoc.Text(V.Local.sRet(1))
+	Gui.F_EmpMaint.txtRev.Text(V.Local.sRet(2))
+	Gui.F_EmpMaint.txtDoc2.Text(V.Local.sRet(3))
+	Gui.F_EmpMaint.txtCatID.Text(V.Local.sRet(4))
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("cmdDocBrowse_Click_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_EmpMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+Program.Sub.cmdDocBrowse_Click.End
+
+Program.Sub.cmdSaveAdd_Click.Start
+F.Intrinsic.Control.SetErrorHandler("cmdSaveAdd_Click_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local..BulkDeclareString(sError, sSelect, sPlaces)
+V.Local.iCount.Declare(Long)
+Function.Intrinsic.Debug.InvokeDebugger
+Function.Intrinsic.Debug.Stop
+
+'We are saving the inactive documents and closing the program
+Gui.F_EmpMaint.gccAdding.SuspendLayout
+
+F.Intrinsic.String.Build("[EMPLOYEE] = '{0}'", V.Screen.F_EmpMaint!txtEmpID.Text, V.Local.sSelect)
+F.Data.DataView.Create("CatTable$EmpDocsTable", "SupView", 22, V.Local.sSelect, "DOC_ID ASC")
+F.Data.DataView.SetValue("CatTable$EmpDocsTable", "SupView", -1, "SUPERVISOR", V.Screen.F_EmpMaint!txtSup.Text.Trim)
+F.Data.DataView.Close("CatTable$EmpDocsTable", "SupView")
+
+F.Data.DataTable.SaveToDB("CatTable$EmpDocsTable", "conx", "GCG_4426_EMP_DOCS", "LINK_ID", 256, "EMPLOYEE@!@EMPLOYEE*!*DOC_ID@!@DOC_ID*!*CAT_ID@!@CAT_ID*!*DATE_COMPLETED@!@DATE_COMPLETED*!*LINK_ID@!@LINK_ID*!*COMPLETED_FLAG@!@COMPLETED_FLAG*!*SUPERVISOR@!@SUPERVISOR*!*DEACT@!@DEACT")
+
+F.Data.DataTable.SaveToDB("EmpCatTable", "conx", "GCG_4426_EMP_CATEG", "EMPLOYEE*!*CAT_ID", 256, "EMPLOYEE@!@EMPLOYEE*!*CAT_ID@!@CAT_ID")
+
+Gui.F_EmpMaint.gccAdding.ResumeLayout
+
+F.Intrinsic.Control.CallSub(f_empmaint_unload)
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("cmdSaveAdd_Click_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_EmpMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(f_empmaint_unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.cmdSaveAdd_Click.End
+
+Program.Sub.gccAdding_RowCellClick.Start
+Program.Sub.gccAdding_RowCellClick.End
+
+Program.Sub.gccDeleteDoc_RowCellClick.Start
+F.Intrinsic.Control.SetErrorHandler("gccDeleteDoc_RowCellClick_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local..BulkDeclareString(sError, sRet, sCatID, sFilter)
+
+F.Intrinsic.Control.If(V.Args.Column, =, "RemoveP")
+	F.Intrinsic.Control.If(V.Args.CellValue, =, False)
+		'Change the Remove Value to True
+		F.Data.DataTable.SetValue("CatTable", V.Args.RowIndex, "RemoveP", True)
+		V.Local.sCatID.Set(V.DataTable.CatTable(V.Args.RowIndex).CAT_ID!FieldValTrim)
+		F.Intrinsic.String.Build("[EMPLOYEE] = '{0}' and [CAT_ID] = {1}", V.Screen.F_EmpMaint!txtEmpID.Text, V.Local.sCatID, V.Local.sFilter)
+		F.Data.DataView.Create("CatTable$EmpDocsTable", "FlagView", 22, V.Local.sFilter, "DOC_ID ASC")
+		F.Data.DataView.SetValue("CatTable$EmpDocsTable", "FlagView", -1, "Remove", True)
+		F.Data.DataView.Close("CatTable$EmpDocsTable", "FlagView")
+		
+	F.Intrinsic.Control.Else
+		F.Data.DataTable.SetValue("CatTable", V.Args.RowIndex, "RemoveP", False)	
+		V.Local.sCatID.Set(V.DataTable.CatTable(V.Args.RowIndex).CAT_ID!FieldValTrim)
+		F.Intrinsic.String.Build("[EMPLOYEE] = '{0}' and [CAT_ID] = {1}", V.Screen.F_EmpMaint!txtEmpID.Text, V.Local.sCatID, V.Local.sFilter)
+		F.Data.DataView.Create("CatTable$EmpDocsTable", "FlagView", 22, V.Local.sFilter, "DOC_ID ASC")
+		F.Data.DataView.SetValue("CatTable$EmpDocsTable", "FlagView", -1, "Remove", False)
+		F.Data.DataView.Close("CatTable$EmpDocsTable", "FlagView")
+	F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.ElseIf(V.Args.Column, =, "Remove")
+	F.Intrinsic.Control.If(V.Args.CellValue, =, True)
+		F.Data.DataTable.SetValue("CatTable$EmpDocsTable", V.Args.RowIndex, "Remove", False)			
+		V.Local.sCatID.Set(V.DataTable.CatTable$EmpDocsTable(V.Args.RowIndex).CAT_ID!FieldValTrim)
+		
+		F.Intrinsic.String.Build("[EMPLOYEE] = '{0}' and [CAT_ID] = {1}", V.Screen.F_EmpMaint!txtEmpID.Text, V.Local.sCatID, V.Local.sFilter)
+		F.Data.DataTable.Select("CatTable", V.Local.sFilter, V.Local.sRet)
+		F.Intrinsic.Control.If(V.Local.sRet, <>, "***NORETURN***")
+			F.Intrinsic.String.Split(V.Local.sRet, "*!*", V.Local.sRet)
+			F.Data.DataTable.SetValue("CatTable", V.Local.sRet(0), "RemoveP", False)
+		F.Intrinsic.Control.EndIf
+	F.Intrinsic.Control.Else
+		
+		F.Data.DataTable.SetValue("CatTable$EmpDocsTable", V.Args.RowIndex, "Remove", True)	
+	F.Intrinsic.Control.EndIf
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("gccDeleteDoc_RowCellClick_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_EmpMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(f_empmaint_unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.gccDeleteDoc_RowCellClick.End
+
+Program.Sub.cmdSaveDeletion_Click.Start
+F.Intrinsic.Control.SetErrorHandler("cmdSaveDeletion_Click_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local..BulkDeclareString(sError, sRet)
+V.Local.iCount.Declare(String)
+
+'we want to close everything out and delete the necessary rows from the database. 
+'Seek flagged rows
+F.Data.DataTable.Select("CatTable$EmpDocsTable", "[Remove] = 1", V.Local.sRet)
+F.Intrinsic.Control.If(V.Local.sRet, =, "***NORETURN***")
+	F.Intrinsic.Control.ExitSub
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.String.Split(V.Local.sRet, "*!*", V.Local.sRet)
+F.Intrinsic.Control.For(V.Local.iCount, V.Local.sRet.UBound.--, 0, -1)
+	F.Data.DataTable.DeleteRow("CatTable$EmpDocsTable", V.Local.sRet(V.Local.iCount))
+F.Intrinsic.Control.Next(V.Local.iCount)
+
+'Save Table
+F.Data.DataTable.SaveToDB("CatTable$EmpDocsTable", "conx", "GCG_4426_EMP_DOCS", "LINK_ID", 7, "EMPLOYEE@!@EMPLOYEE*!*DOC_ID@!@DOC_ID*!*CAT_ID@!@CAT_ID*!*DATE_COMPLETED@!@DATE_COMPLETED*!*LINK_ID@!@LINK_ID*!*COMPLETED_FLAG@!@COMPLETED_FLAG*!*DEACT@!@DEACT")
+
+F.Data.DataTable.Select("EmpCatTable", "[Remove] = 1", V.Local.sRet)
+F.Intrinsic.Control.If(V.Local.sRet, <>, "***NORETURN***")
+	
+	F.Intrinsic.Control.For(V.Local.iCount, V.Local.sRet.UBound.--, 0, -1)
+		F.Data.DataTable.DeleteRow("EmpCatTable", V.Local.sRet(V.Local.iCount))
+	F.Intrinsic.Control.Next(V.Local.iCount)
+	'Save table
+	F.Data.DataTable.SaveToDB("EmpCatTable", "conx", "GCG_4426_EMP_CATEG", "EMPLOYEE*!*CAT_ID", 7, "EMPLOYEE@!@EMPLOYEE*!*CAT_ID@!@CAT_ID")
+	
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.CallSub(f_empmaint_unload)
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("cmdSaveDeletion_Click_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_EmpMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(f_empmaint_unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.cmdSaveDeletion_Click.End
+
+Program.Sub.F_EmpMaint_UnLoad.Start
+F.Intrinsic.Control.SetErrorHandler("F_EmpMaint_UnLoad_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+F.ODBC.Connection!conx.Close
+F.Intrinsic.Control.End
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("F_EmpMaint_UnLoad_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_EmpMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+Program.Sub.F_EmpMaint_UnLoad.End
+
+Program.Sub.Main.Start
+F.Intrinsic.Control.SetErrorHandler("Main_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+'This is part of the ISO tracking project. This will allow the user to manipulate what training information is available to the employees and view what they have completed and what has yet to be completed.
+F.ODBC.Connection!conx.OpenConnection(V.Ambient.PDSN, V.Ambient.PUser, V.Ambient.PPass)
+F.Intrinsic.UI.SetBrowserHotTypeAhead(True)
+
+'Not much can be done until the user selects an employee..
+F.Data.Dictionary.CreateFromSQL("DicEmp", "conx", "Select RTRIM(LTRIM(EMPLOYEE)) as EMPLOYEE, NAME from V_EMPLOYEE_MSTR")
+F.Data.Dictionary.SetDefaultReturn("DicEmp", -1)
+Gui.F_EmpMaint.txtEmployee.AddAutoCompleteItem("DicEmp", "Dictionary")
+
+F.Data.Dictionary.CreateFromSQL("DicEmpNo", "conx", "Select NAME, RTRIM(LTRIM(EMPLOYEE)) as EMPLOYEE from V_EMPLOYEE_MSTR")
+F.Data.Dictionary.SetDefaultReturn("DicEmpNo", -1)
+
+'Populating the category ddl
+F.Data.Dictionary.CreateFromSQL("DicCatName", "conx", "Select CAT_ID, CAT_NAME from GCG_4426_CATEGORIES where INACTIVE_FLAG = '0'")
+F.Data.Dictionary.SetDefaultReturn("DicCatName", -1)
+F.Data.Dictionary.CreateFromSQL("DicCatID", "conx", "Select CAT_NAME, CAT_ID from GCG_4426_CATEGORIES where INACTIVE_FLAG = '0'")
+F.Data.Dictionary.SetDefaultReturn("DicCatID", -1)
+
+Gui.F_EmpMaint.ddlAddCat.AddItem("")
+Gui.F_EmpMaint.ddlAddCat.AddItems("Dictionary", "DicCatName")
+F.Intrinsic.Control.CallSub(CrateTable)
+F.Intrinsic.Control.CallSub(PopViewTab, "sEmp", "0")
+F.Intrinsic.Control.CallSub(PopMaintTab, "sEmp", "0")
+F.Intrinsic.Control.CallSub(PopAddTab, "sEmp", "0")
+
+Gui.F_EmpMaint.ddlAddCat.Enabled(False)
+Gui.F_EmpMaint.cmdDocBrowse.Enabled(False)
+
+Gui.F_EmpMaint..Show
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Main_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_EmpMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(f_empmaint_unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.Main.End
+
+Program.Sub.PopAddTab.Start
+F.Intrinsic.Control.SetErrorHandler("PopAddTab_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+V.Local.sFilter.Declare(String)
+V.Local.sSql.Declare(String)
+
+Gui.F_EmpMaint.ddlAddCat.Enabled(True)
+Gui.F_EmpMaint.cmdDocBrowse.Enabled(True)
+
+'Info for Emp docs. The user will be able to assign documents and categories to employees through this screen.
+F.Intrinsic.String.Build("[EMPLOYEE] = '{0}' and [Doc_Title] <> 'Not Found'", V.Args.sEmp.Trim, V.Local.sFilter)
+
+F.Intrinsic.Control.If(V.DataView.CatTable$EmpDocsTable!EmpDocsView.Exists, =, True)
+	F.Data.DataView.Close("CatTable$EmpDocsTable", "EmpDocsView")
+F.Intrinsic.Control.EndIf
+
+F.Data.DataView.Create("CatTable$EmpDocsTable", "EmpDocsView", 22, V.Local.sFilter, "DOC_ID ASC")
+
+Gui.F_EmpMaint.gccAdding.AddGridviewFromDataview("EmpDocsGrid", "CatTable", "EmpDocsView")
+
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "EMPLOYEE", "Visible", False)
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "CAT_ID", "Visible", False)
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "DATE_COMPLETED", "Visible", False)
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "LINK_ID", "Visible", False)
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "COMPLETED_FLAG", "Visible", False)
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "Remove", "Visible", False)
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "SUPERVISOR", "Visible", False)
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "Name", "Visible", False)
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "DEACT", "Visible", False)
+
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "DOC_ID", "AllowEdit", False)
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "Doc_Title", "AllowEdit", False)
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "Doc_Rev", "AllowEdit", False)
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "Doc_Description", "AllowEdit", False)
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "CAT_NAME", "AllowEdit", False)
+
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "DOC_ID", "ReadOnly", True)
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "Doc_Title", "ReadOnly", True)
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "Doc_Rev", "ReadOnly", True)
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "Doc_Description", "ReadOnly", True)
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "CAT_NAME", "ReadOnly", True)
+
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "DOC_ID", "Caption", "ID")
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "Doc_Title", "Caption", "Title")
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "Doc_Rev", "Caption", "Rev")
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "Doc_Description", "Caption", "Description")
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "CAT_NAME", "Caption", "Category")
+
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "DOC_ID", "Width", 150)
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "Doc_Title", "Width", 750)
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "Doc_Rev", "Width", 300)
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "Doc_Description", "Width", 4500)
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "CAT_NAME", "Width", 450)
+
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "DOC_ID", "VisibleIndex", 1)
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "Doc_Title", "VisibleIndex", 2)
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "Doc_Rev", "VisibleIndex", 3)
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "Doc_Description", "VisibleIndex", 4)
+Gui.F_EmpMaint.gccAdding.SetColumnProperty("EmpDocsGrid", "CAT_NAME", "VisibleIndex", 5)
+
+Gui.F_EmpMaint.gccAdding.MainView("EmpDocsGrid")
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("PopAddTab_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_EmpMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(f_empmaint_unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.PopAddTab.End
+
+Program.Sub.PopMaintTab.Start
+F.Intrinsic.Control.SetErrorHandler("PopMaintTab_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local..BulkDeclareString(sError, sFilter)
+
+'Create Deletion Gridview. The user will be able to delete stuff assigned to employees through this tab
+F.Intrinsic.String.Build("[EMPLOYEE] = '{0}'", V.Args.sEmp.Trim, V.Local.sFilter)
+
+F.Intrinsic.Control.If(V.DataView.CatTable!MasterView.Exists, =, True)
+	F.Data.DataView.Close("CatTable", "MasterView")
+	F.Data.DataView.Close("CatTable$EmpDocsTable", "MasterChildView")
+F.Intrinsic.Control.EndIf
+
+F.Data.DataView.Create("CatTable", "MasterView", 22, V.Local.sFilter, "CAT_ID ASC")
+
+F.Intrinsic.String.Build("[EMPLOYEE] = '{0}' and [Doc_Title] <> 'Not Found'", V.Args.sEmp.Trim, V.Local.sFilter)
+F.Data.DataView.Create("CatTable$EmpDocsTable", "MasterChildView", 22, V.Local.sFilter, "DOC_ID ASC")
+
+Gui.F_EmpMaint.gccDeleteDoc.AddGridviewFromDataview("MaintMasterGrid", "CatTable", "MasterView")
+Gui.F_EmpMaint.gccDeleteDoc.AddGridviewFromDataview("MaintChildGrid", "CatTable", "MasterChildView")
+
+'Grid prettiness for parent grid
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintMasterGrid", "EMPLOYEE", "Visible", False)
+
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintMasterGrid", "CAT_ID", "AllowEdit",  False)
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintMasterGrid", "Cat_Name", "AllowEdit",  False)
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintMasterGrid", "RemoveP", "AllowEdit",  False)
+
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintMasterGrid", "CAT_ID", "ReadOnly", True)
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintMasterGrid", "Cat_Name", "ReadOnly", True)
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintMasterGrid", "RemoveP", "ReadOnly",  True)
+
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintMasterGrid", "CAT_ID", "Caption", "Category ID")
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintMasterGrid", "Cat_Name", "Caption", "Category Name")
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintMasterGrid", "RemoveP", "Caption", "Remove")
+
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintMasterGrid", "CAT_ID", "Width", 500)
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintMasterGrid", "Cat_Name", "Width", 5000)
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintMasterGrid", "RemoveP", "Width", 500)
+
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintMasterGrid", "CAT_ID", "VisibleIndex", 1)
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintMasterGrid", "Cat_Name", "VisibleIndex", 2)
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintMasterGrid", "RemoveP", "VisibleIndex", 3)
+
+'Grid Prettiness for child grid
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "EMPLOYEE", "Visible", False)
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "CAT_ID", "Visible", False)
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "DATE_COMPLETED", "Visible", False)
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "LINK_ID", "Visible", False)
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "CAT_NAME", "Visible", False)
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "COMPLETED_FLAG", "Visible", False)
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "SUPERVISOR", "Visible", False)
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "DEACT", "Visible", False)
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "Name", "Visible", False)
+
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "DOC_ID", "AllowEdit", False)
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "Doc_Title", "AllowEdit", False)
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "Doc_Rev", "AllowEdit", False)
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "Doc_Description", "AllowEdit", False)
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "Remove", "AllowEdit", False)
+
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "DOC_ID", "ReadOnly", True)
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "Doc_Title", "ReadOnly", True)
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "Doc_Rev", "ReadOnly", True)
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "Doc_Description", "ReadOnly", True)
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "Remove", "ReadOnly", True)
+
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "DOC_ID", "Caption", "Doc ID")
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "Doc_Title", "Caption", "Title")
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "Doc_Rev", "Caption", "Rev")
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "Doc_Description", "Caption", "Description")
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "Remove", "Caption", "Remove")
+
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "DOC_ID", "Width", 150)
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "Doc_Title", "Width", 750)
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "Doc_Rev", "Width", 300)
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "Doc_Description", "Width", 4500)
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "Remove", "Width", 300)
+
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "DOC_ID", "VisibleIndex", 1)
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "Doc_Title", "VisibleIndex", 2)
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "Doc_Rev", "VisibleIndex", 3)
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "Doc_Description", "VisibleIndex", 4)
+Gui.F_EmpMaint.gccDeleteDoc.SetColumnProperty("MaintChildGrid", "Remove", "VisibleIndex", 5)
+
+Gui.F_EmpMaint.gccDeleteDoc.MainView("MaintMasterGrid")
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("PopMaintTab_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_EmpMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(f_empmaint_unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.PopMaintTab.End
+
+Program.Sub.PopViewTab.Start
+F.Intrinsic.Control.SetErrorHandler("PopViewTab_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local..BulkDeclareString(sError, sFilter)
+
+'This tab will include all employee-docs assignment. The user will be able to filter and sort the data to easily see who has completed certain documentation
+F.Intrinsic.String.Build("[Doc_Title] <> 'Not Found'", V.Args.sEmp, V.Local.sFilter)
+
+F.Intrinsic.Control.If(V.DataView.CatTable$EmpDocsTable!CompletionView.Exists, =, True)
+	F.Data.DataView.Close("CatTable$EmpDocsTable", "CompletionView")
+F.Intrinsic.Control.EndIf
+
+F.Data.DataView.Create("CatTable$EmpDocsTable", "CompletionView", 22, V.Local.sFilter, "EMPLOYEE ASC, DOC_ID ASC")
+
+'This is strictly to be viewed
+Gui.F_EmpMaint.gccProgressView.AddGridviewFromDataView("CompletionGrid", "CatTable", "CompletionView")
+
+'Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "EMPLOYEE", "Visible", False)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "CAT_ID", "Visible", False)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "LINK_ID", "Visible", False)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "COMPLETED_FLAG", "Visible", False)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "Remove", "Visible", False)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "DEACT", "Visible", False)
+
+
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "DOC_ID", "AllowEdit", False)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "Doc_Title", "AllowEdit", False)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "Doc_Rev", "AllowEdit", False)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "Doc_Description", "AllowEdit", False)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "CAT_NAME", "AllowEdit", False)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "DATE_COMPLETED", "AllowEdit", False)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "SUPERVISOR", "AllowEdit", False)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "EMPLOYEE", "AllowEdit", False)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "Name", "AllowEdit", False)
+
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "DOC_ID", "ReadOnly", True)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "Doc_Title", "ReadOnly", True)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "Doc_Rev", "ReadOnly", True)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "Doc_Description", "ReadOnly", True)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "CAT_NAME", "ReadOnly", True)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "DATE_COMPLETED", "ReadOnly", True)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "SUPERVISOR", "ReadOnly", True)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "EMPLOYEE", "ReadOnly", True)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "Name", "ReadOnly", True)
+
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "DOC_ID", "Caption", "ID")
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "Doc_Title", "Caption", "Title")
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "Doc_Rev", "Caption", "Rev")
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "Doc_Description", "Caption", "Description")
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "CAT_NAME", "Caption", "Category")
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "DATE_COMPLETED", "Caption", "Completion Date")
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "SUPERVISOR", "Caption", "Supervisor")
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "EMPLOYEE", "Caption", "Employee No.")
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "Name", "Caption", "Employee Name")
+
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "DOC_ID", "Width", 150)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "Doc_Title", "Width", 750)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "Doc_Rev", "Width", 300)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "Doc_Description", "Width", 2500)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "CAT_NAME", "Width", 450)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "SUPERVISOR", "Width", 1250)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "DATE_COMPLETED", "Width", 500)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "EMPLOYEE", "Width", 450)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "Name", "Width", 2000)
+
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "EMPLOYEE", "VisibleIndex", 1)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "Name", "VisibleIndex", 2)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "DOC_ID", "VisibleIndex", 3)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "Doc_Title", "VisibleIndex", 4)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "Doc_Rev", "VisibleIndex", 5)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "Doc_Description", "VisibleIndex", 6)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "SUPERVISOR", "VisibleIndex", 7)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "CAT_NAME", "VisibleIndex", 8)
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "DATE_COMPLETED", "VisibleIndex", 9)
+
+Gui.F_EmpMaint.gccProgressView.SetColumnProperty("CompletionGrid", "DATE_COMPLETED", "DisplayCustomDatetime", "d")
+
+Gui.F_EmpMaint.gccProgressView.AddStyleFormatCondition("CompletionGrid", "COMPLETED_FLAG", "BCGreen", "Equal", "True")
+Gui.F_EmpMaint.gccProgressView.SetStyleFormatConditionProperty("CompletionGrid", "COMPLETED_FLAG", "BCGreen", "BackColor", "Green")
+Gui.F_EmpMaint.gccProgressView.SetStyleFormatConditionProperty("CompletionGrid", "COMPLETED_FLAG", "BCGreen", "ApplyToRow", "True")
+
+Gui.F_EmpMaint.gccProgressView.AddStyleFormatCondition("CompletionGrid", "COMPLETED_FLAG", "BCRed", "Equal", "False")
+Gui.F_EmpMaint.gccProgressView.SetStyleFormatConditionProperty("CompletionGrid", "COMPLETED_FLAG", "BCRed", "BackColor", "Red")
+Gui.F_EmpMaint.gccProgressView.SetStyleFormatConditionProperty("CompletionGrid", "COMPLETED_FLAG", "BCRed", "ApplyToRow", "True")
+
+Gui.F_EmpMaint.gccProgressView.MainView("CompletionGrid")
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("PopViewTab_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_EmpMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(f_empmaint_unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.PopViewTab.End
+
+Program.Sub.CrateTable.Start
+F.Intrinsic.Control.SetErrorHandler("CrateTable_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+V.Local.sLines.Declare(String)
+V.Local.iCount.Declare(Long)
+
+'We create tables and dictionaries to be used through all of the screens.
+F.Data.DataTable.CreateFromSQL("EmpCatTable", "conx", "Select * from GCG_4426_EMP_CATEG", True)
+F.Data.DataTable.CreateFromSQL("CatTable", "conx", "Select distinct RTRIM(LTRIM(EMPLOYEE)) as EMPLOYEE, CAT_ID from GCG_4426_EMP_DOCS", True)
+
+'Create the main table where we can get the views from
+F.Data.DataTable.CreateFromSQL("CatTable$EmpDocsTable", "conx", "Select RTRIM(LTRIM(EMPLOYEE)) as EMPLOYEE, DOC_ID, CAT_ID, DATE_COMPLETED, LINK_ID, COMPLETED_FLAG, SUPERVISOR, DEACT from GCG_4426_EMP_DOCS where DEACT = '0' order by LINK_ID asc", True)
+
+F.Intrinsic.Control.If(V.DataTable.CatTable$EmpDocsTable.RowCount, =, 0)
+	V.Global.iDocId.Set(0)
+F.Intrinsic.Control.Else
+	V.Global.iDocId.Set(V.DataTable.CatTable$EmpDocsTable(V.DataTable.CatTable$EmpDocsTable.RowCount--).LINK_ID!FieldValLong)
+F.Intrinsic.Control.EndIf
+
+'This Data Table is for the Dictionaries to fill in the data that will be displayed
+F.Data.DataTable.CreateFromSQL("DocsTable", "conx", "Select DOC_ID, DOC_TITLE, DOC_REV, DOC_DESCRIPTION from GCG_4426_DOCUMENTS where INACTIVE_FLAG = '0'", True)
+
+F.Data.Dictionary.CreateFromDataTable("DocTitleDic", "DocsTable", "DOC_ID", "DOC_TITLE")
+F.Data.Dictionary.SetDefaultReturn("DocTitleDic", "-1")
+F.Data.DataTable.AddColumn("CatTable$EmpDocsTable", "Doc_Title", "String")
+F.Data.DataTable.FillFromDictionary("CatTable$EmpDocsTable", "DocTitleDic", "DOC_ID", "Doc_Title")
+F.Data.Dictionary.Close("DocTitleDic")
+
+F.Data.Dictionary.CreateFromDataTable("DocRevDic", "DocsTable", "DOC_ID", "DOC_REV")
+F.Data.Dictionary.SetDefaultReturn("DocRevDic", "")
+F.Data.DataTable.AddColumn("CatTable$EmpDocsTable", "Doc_Rev", "String")
+F.Data.DataTable.FillFromDictionary("CatTable$EmpDocsTable", "DocRevDic", "DOC_ID", "Doc_Rev")
+F.Data.Dictionary.Close("DocRevDic")
+
+F.Data.Dictionary.CreateFromDataTable("DocDescDic", "DocsTable", "DOC_ID", "DOC_DESCRIPTION")
+F.Data.Dictionary.SetDefaultReturn("DocDescDic", "Not Found")
+F.Data.DataTable.AddColumn("CatTable$EmpDocsTable", "Doc_Description", "String")
+F.Data.DataTable.FillFromDictionary("CatTable$EmpDocsTable", "DocDescDic", "DOC_ID", "Doc_Description")
+F.Data.Dictionary.Close("DocDescDic")
+
+F.Data.DataTable.Close("DocsTable")
+
+F.Data.DataTable.AddColumn("CatTable$EmpDocsTable", "CAT_NAME", "String")
+F.Data.DataTable.FillFromDictionary("CatTable$EmpDocsTable", "DicCatName", "CAT_ID", "CAT_NAME")
+F.Data.DataTable.AddColumn("CatTable", "Cat_Name", "String")
+F.Data.DataTable.FillFromDictionary("CatTable", "DicCatName", "CAT_ID", "Cat_Name")
+
+F.Data.DataTable.AddColumn("EmpCatTable", "Remove", "Bit", False)
+F.Data.DataTable.AddColumn("CatTable", "RemoveP", "Bit", False)
+F.Data.Datatable.AddColumn("CatTable$EmpDocsTable", "Remove", "Bit", False)
+
+F.Data.DataTable.AddColumn("CatTable$EmpDocsTable", "Name", "String")
+F.Data.DataTable.FillFromDictionary("CatTable$EmpDocsTable", "DicEmp", "EMPLOYEE", "Name")
+
+F.Data.DataTable.AddRelation("CatTable", "EMPLOYEE*!*CAT_ID", "CatTable$EmpDocsTable", "EMPLOYEE*!*CAT_ID")
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("CrateTable_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_EmpMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(f_empmaint_unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.CrateTable.End
+
+Program.Sub.Comments.Start
+${$0$}$$}$$}$12:00:00 AM$}$False
+Program.Sub.Comments.End
