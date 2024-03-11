@@ -1,0 +1,37 @@
+Program.Sub.Preflight.Start
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+F.Intrinsic.Control.SetErrorHandler("Main_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+V.Local..BulkDeclareLong(iRunID, iReptID, iLogID)
+
+'This project is just printing all available report sequences through a Crystal Report. This is to be attached to a custom menu item as a preprocessor to the report GCG_4426_DocRpt.rpt
+F.ODBC.Connection!conx.OpenConnection(V.Ambient.PDSN, V.Ambient.PUser, V.Ambient.PPass)
+
+F.Global.BI.GetRunID(V.Local.iRunID)
+
+F.Global.BI.GetIDFromName("GCG_4426_DocRpt.rpt", V.Local.iReptID)
+F.Global.BI.StartLogging(V.Local.iRunID, V.Local.iReptID, -1, "", V.Local.iLogID)
+
+F.Data.DataTable.CreateFromSQL("DocTable", "conx", "Select * from GCG_4426_DOCUMENTS")
+
+F.Data.DataTable.SetValue("DocTable", -1, "BIRUNID", V.Local.iRunID)
+F.Data.DataTable.SaveToDB("DocTable", "conx", "GCG_4426_DOCUMENTS", "DOC_ID")
+
+F.Global.BI.StopLogging(V.Local.iLogID)
+
+F.Global.BI.RunReportPreProcessor(V.Local.iRunID, V.Local.iLogID, "", "", "", 16, False, "", -1, "", -1, "", "", V.Local.iLogID)
+
+F.ODBC.Connection!conx.Close
+F.Intrinsic.Control.End
+
+F.Intrinsic.Control.Label("Main_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_DocISOPreProc.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.End
+Function.Intrinsic.Control.EndIf
+Program.Sub.Main.End
