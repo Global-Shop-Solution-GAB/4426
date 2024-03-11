@@ -1,0 +1,380 @@
+Program.Sub.ScreenSU.Start
+Gui.F_Login..Create
+Gui.F_Login..Caption("Training Login")
+Gui.F_Login..Size(3795,2955)
+Gui.F_Login..MinX(0)
+Gui.F_Login..MinY(0)
+Gui.F_Login..Position(0,0)
+Gui.F_Login..BackColor(-2147483633)
+Gui.F_Login..MousePointer(0)
+Gui.F_Login..Event(UnLoad,F_Login_UnLoad)
+Gui.F_Login.txtEmp.Create(TextBox,"",True,2460,300,0,255,450,True,0,"Arial",8,-2147483643,1)
+Gui.F_Login.txtEmp.Event(LostFocus,txtEmp_LostFocus)
+Gui.F_Login.txtEmp.Locked(True)
+Gui.F_Login.txtPass.Create(TextBox,"",True,3000,300,0,255,1155,True,0,"Arial",8,-2147483643,1)
+Gui.F_Login.txtPass.PasswordChar("*")
+Gui.F_Login.cmdOk.Create(Button)
+Gui.F_Login.cmdOk.Size(855,375)
+Gui.F_Login.cmdOk.Position(2445,1845)
+Gui.F_Login.cmdOk.Caption("OK")
+Gui.F_Login.cmdOk.Event(Click,cmdOk_Click)
+Gui.F_Login.cmdCancel.Create(Button)
+Gui.F_Login.cmdCancel.Size(855,375)
+Gui.F_Login.cmdCancel.Position(1440,1845)
+Gui.F_Login.cmdCancel.Caption("Cancel")
+Gui.F_Login.cmdCancel.Event(Click,F_Login_UnLoad)
+Gui.F_Login.lblEmp.Create(Label,"Employee",True,1935,255,0,195,240,True,0,"Arial",8,-2147483633,0)
+Gui.F_Login.lblPass.Create(Label,"Password",True,1935,255,0,195,945,True,0,"Arial",8,-2147483633,0)
+Gui.F_Login.lblWarning.Create(Label,"Employee and Password do not match.",False,2925,390,0,285,1530,True,0,"Arial",8,-2147483633,0)
+Gui.F_Login.lblWarning.ForeColor(255)
+Gui.F_Login.cmdEmp.Create(Button)
+Gui.F_Login.cmdEmp.Size(375,375)
+Gui.F_Login.cmdEmp.Position(2910,405)
+Gui.F_Login.cmdEmp.Caption("^")
+Gui.F_Login.cmdEmp.Event(Click,cmdEmp_Click)
+Gui.F_DocsView..Create
+Gui.F_DocsView..Caption("Training Documents")
+Gui.F_DocsView..Size(15360,10620)
+Gui.F_DocsView..MinX(0)
+Gui.F_DocsView..MinY(0)
+Gui.F_DocsView..Position(0,0)
+Gui.F_DocsView..BackColor(-2147483633)
+Gui.F_DocsView..MousePointer(0)
+Gui.F_DocsView..Event(UnLoad,F_DocsView_UnLoad)
+Gui.F_DocsView.ggcDocs.Create(GsGridControl)
+Gui.F_DocsView.ggcDocs.Size(14535,9390)
+Gui.F_DocsView.ggcDocs.Position(195,315)
+Gui.F_DocsView.ggcDocs.Event(RowCellClick,ggcDocs_RowCellClick)
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+F.Intrinsic.Control.SetErrorHandler("Main_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+'This will run off a custom menu item. Employees will be able to log in using their Employee number and the last number of their social security number. 
+'Once logged in, they will be able to see all training document assigned to them and they will be able to check off on completed items.
+F.ODBC.Connection!conx.OpenConnection(V.Ambient.PDSN, V.Ambient.PUser, V.Ambient.PPass)
+
+'Start off by making a dictionary of Emps to PASS to easily check when user provides login info
+F.Data.Dictionary.CreateFromSQL("EmpPass", "conx", "Select RTRIM(LTRIM(NAME)), RIGHT(SOCIAL_SECURITY_NO, 4) from V_EMPLOYEE_MSTR")
+F.Data.Dictionary.SetDefaultReturn("EmpPass", -1)
+
+Gui.F_Login..Show
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Main_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_EmpTraining.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(f_login_unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.Main.End
+
+Program.Sub.F_Login_UnLoad.Start
+F.Intrinsic.Control.SetErrorHandler("F_Login_UnLoad_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+F.ODBC.Connection!conx.Close
+F.Intrinsic.Control.End
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("F_Login_UnLoad_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_EmpTraining.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+Program.Sub.F_Login_UnLoad.End
+
+Program.Sub.cmdOk_Click.Start
+F.Intrinsic.Control.SetErrorHandler("cmdOk_Click_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+'If Password is incorrect, make warning visible
+F.Intrinsic.Control.If(V.Screen.F_Login!txtEmp.Text.Trim, =, "")
+	F.Intrinsic.Control.ExitSub
+F.Intrinsic.Control.ElseIf(V.Screen.F_Login!txtPass.Text.Trim, <>, V.Dictionary.EmpPass![V.Screen.F_Login!txtEmp.Text.Trim])
+	Gui.F_Login.lblWarning.Visible(True)
+	Gui.F_Login.txtPass.Text("")
+	F.Intrinsic.Control.ExitSub
+F.Intrinsic.Control.EndIf
+
+Gui.F_Login..Visible(False)
+
+F.Intrinsic.Control.CallSub(PopDocGrid)
+
+Gui.F_DocsView..Show
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("cmdOk_Click_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_EmpTraining.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(f_login_unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.cmdOk_Click.End
+
+Program.Sub.F_DocsView_UnLoad.Start
+F.Intrinsic.Control.SetErrorHandler("F_DocsView_UnLoad_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+'Save progress and exit program
+F.Data.DataTable.SaveToDB("DocumentsTable", "conx", "GCG_4426_EMP_DOCS", "LINK_ID", 256, "EMPLOYEE@!@EMPLOYEE*!*DOC_ID@!@DOC_ID*!*CAT_ID@!@CAT_ID*!*DATE_COMPLETED@!@DATE_COMPLETED*!*LINK_ID@!@LINK_ID*!*COMPLETED_FLAG@!@COMPLETED_FLAG")
+
+F.Data.DataTable.Close("DocumentsTable")
+
+F.ODBC.Connection!conx.Close
+F.Intrinsic.Control.End
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("F_DocsView_UnLoad_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_EmpTraining.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+Program.Sub.F_DocsView_UnLoad.End
+
+Program.Sub.ggcDocs_RowCellClick.Start
+F.Intrinsic.Control.SetErrorHandler("ggcDocs_RowCellClick_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local..BulkDeclareString(sError, sFile)
+V.Local.dToday.Declare(Date)
+
+'When employee clicks on the title of the document, the document will be displayed on screen. We will use the flag 'OPEN' to determine if the file has been opened before the user can claim that the docuemnt has been read
+F.Intrinsic.Control.SelectCase(V.Args.Column)
+F.Intrinsic.Control.Case("Title")
+	V.Local.sFile.Set(V.DataTable.DocumentsTable(V.Args.RowHandle).FileLocation!FieldValTrim)
+	F.Intrinsic.Task.ShellExec("Topic", "Open", V.Local.sFile, "", "", 1)
+	F.Data.DataTable.SetValue("DocumentsTable", V.Args.RowHandle, "Opened", True)
+	
+F.Intrinsic.Control.Case("COMPLETED_FLAG")
+	F.Intrinsic.Control.If(V.DataTable.DocumentsTable(V.Args.RowHandle).Opened!FieldValTrim, =, True)
+		V.Local.dToday.Set(V.Ambient.Date.DateComp)
+		F.Data.DataTable.SetValue("DocumentsTable", V.Args.RowHandle, "Completed_Flag", True, "Date_Completed", V.Local.dToday)
+	
+	F.Intrinsic.Control.EndIf
+F.Intrinsic.Control.EndSelect
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("ggcDocs_RowCellClick_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_EmpTraining.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(f_login_unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.ggcDocs_RowCellClick.End
+
+Program.Sub.txtEmp_LostFocus.Start
+F.Intrinsic.Control.SetErrorHandler("txtEmp_LostFocus_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+'Making sure the Warning Label is hidden if they input a different name and clearing the Password
+Gui.F_Login.txtPass.Text("")
+Gui.F_Login.lblWarning.Visible(False)
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("txtEmp_LostFocus_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_EmpTraining.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+Program.Sub.txtEmp_LostFocus.End
+
+Program.Sub.PopDocGrid.Start
+F.Intrinsic.Control.SetErrorHandler("PopDocGrid_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local..BulkDeclareString(sError, sSql, sEmpID)
+
+'Create tables and populate additional data
+F.Intrinsic.String.Build("Select EMPLOYEE from EMPLOYEE_MSTR where NAME = '{0}'", V.Screen.F_Login!txtEmp.Text, V.Local.sSql)
+F.ODBC.Connection!conx.ExecuteAndReturn(V.Local.sSql, V.Local.sEmpID)
+
+'The grid will display all documents assigned to the user logged in
+F.Intrinsic.String.Build("Select * from GCG_4426_EMP_DOCS where RTRIM(EMPLOYEE) = '{0}'", V.Local.sEmpID.Trim, V.Local.sSql)
+F.Data.DataTable.CreateFromSQL("DocumentsTable", "conx", V.Local.sSql, True)
+F.Data.DataTable.AddColumn("DocumentsTable", "Opened", "Bit", 0)
+
+'Fill Document information through dictionaries
+F.Data.DataTable.CreateFromSQL("DocInfoTable", "conx", "Select DOC_ID, LTRIM(RTRIM(DOC_TITLE)) as DOC_TITLE, DOC_REV, DOC_DESCRIPTION, FILE_LOCATION from GCG_4426_DOCUMENTS where INACTIVE_FLAG = '0'")
+
+F.Data.Dictionary.CreateFromDataTable("TitleDic", "DocInfoTable", "DOC_ID", "DOC_TITLE")
+F.Data.Dictionary.SetDefaultReturn("TitleDic", "Not Found")
+F.Data.DataTable.AddColumn("DocumentsTable", "Title", "String")
+F.Data.DataTable.FillFromDictionary("DocumentsTable", "TitleDic", "DOC_ID", "Title")
+F.Data.Dictionary.Close("TitleDic")
+
+'Recreate dictionaries for the rest of the columns
+F.Data.Dictionary.CreateFromDataTable("REVDic", "DocInfoTable", "DOC_ID", "DOC_REV")
+F.Data.Dictionary.SetDefaultReturn("REVDic", "Not Found")
+F.Data.DataTable.AddColumn("DocumentsTable", "Rev", "String")
+F.Data.DataTable.FillFromDictionary("DocumentsTable", "REVDic", "DOC_ID", "Rev")
+F.Data.Dictionary.Close("REVDic")
+
+'Recreate dictionaries for the rest of the columns
+F.Data.Dictionary.CreateFromDataTable("DescriptionDic", "DocInfoTable", "DOC_ID", "DOC_DESCRIPTION")
+F.Data.Dictionary.SetDefaultReturn("DescriptionDic", "Not Found")
+F.Data.DataTable.AddColumn("DocumentsTable", "Description", "String")
+F.Data.DataTable.FillFromDictionary("DocumentsTable", "DescriptionDic", "DOC_ID", "Description")
+F.Data.Dictionary.Close("DescriptionDic")
+
+F.Data.Dictionary.CreateFromDataTable("FileDic", "DocInfoTable", "DOC_ID", "FILE_LOCATION")
+F.Data.Dictionary.SetDefaultReturn("FileDic", "Not Found")
+F.Data.DataTable.AddColumn("DocumentsTable", "FileLocation", "String")
+F.Data.DataTable.FillFromDictionary("DocumentsTable", "FileDic", "DOC_ID", "FileLocation")
+F.Data.Dictionary.Close("FileDic")
+
+F.Data.DataTable.Close("DocInfoTable")
+
+F.Data.Dictionary.CreateFromSQL("CatNameDic", "conx", "Select CAT_ID, CAT_NAME from GCG_4426_CATEGORIES")
+F.Data.Dictionary.SetDefaultReturn("CatNameDic", "")
+F.Data.DataTable.AddColumn("DocumentsTable", "CatName", "String")
+F.Data.DataTable.FillFromDictionary("DocumentsTable", "CatNameDic", "CAT_ID", "CatName")
+
+F.Data.Dictionary.Close("CatNameDic")
+
+F.Intrinsic.Control.CallSub(GridProperties)
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("PopDocGrid_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_EmpTraining.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(f_login_unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.PopDocGrid.End
+
+Program.Sub.GridProperties.Start
+F.Intrinsic.Control.SetErrorHandler("GridProperties_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+'Prettify grid
+Gui.F_DocsView.ggcDocs.AddGridviewFromDatatable("DocsGrid", "DocumentsTable")
+
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "EMPLOYEE", "Visible", False)
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "CAT_ID", "Visible", False)
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "LINK_ID", "Visible", False)
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "FileLocation", "Visible", False)
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "Opened", "Visible", False)
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "DEACT", "Visible", False)
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "SUPERVISOR", "Visible", False)
+
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "CatName", "AllowEdit", False)
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "DOC_ID", "AllowEdit", False)
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "Title", "AllowEdit", False)
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "Rev", "AllowEdit", False)
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "Description", "AllowEdit", False)
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "Completed_Flag", "AllowEdit", False)
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "Date_Completed", "AllowEdit", False)
+
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "Title", "CellForeColor", "Blue")
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "Title", "CellFontUnderline", True)
+
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "CatName", "ReadOnly", True)
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "DOC_ID", "ReadOnly", True)
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "Title", "ReadOnly", True)
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "Rev", "ReadOnly", True)
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "Description", "ReadOnly", True)
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "Completed_Flag", "ReadOnly", True)
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "Date_Completed", "ReadOnly", True)
+
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "CatName", "Caption", "Category")
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "DOC_ID", "Caption", "Doc ID")
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "Title", "Caption", "Title")
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "Rev", "Caption", "Rev")
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "Description", "Caption", "Description")
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "Completed_Flag", "Caption", "Completed")
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "Date_Completed", "Caption", "Date Completed")
+
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "CatName", "VisibleIndex", 1)
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "DOC_ID", "VisibleIndex", 2)
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "Title", "VisibleIndex", 3)
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "Rev", "VisibleIndex", 4)
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "Description", "VisibleIndex", 5)
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "Completed_Flag", "VisibleIndex", 6)
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "Date_Completed", "VisibleIndex", 7)
+
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "CatName", "Width", 450)
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "DOC_ID", "Width", 150)
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "Title", "Width", 750)
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "Rev", "Width", 300)
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "Description", "Width", 4500)
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "Completed_Flag", "Width", 250)
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "Date_Completed", "Width", 450)
+
+Gui.F_DocsView.ggcDocs.SetColumnProperty("DocsGrid", "Date_Completed", "DisplayCustomDateTime", "d")
+
+Gui.F_DocsView.ggcDocs.AddStyleFormatCondition("DocsGrid", "Completed_Flag", "Comp", "Equal", "True")
+Gui.F_DocsView.ggcDocs.SetStyleFormatConditionProperty("DocsGrid", "Completed_Flag", "Comp", "BackColor", "Green")
+Gui.F_DocsView.ggcDocs.SetStyleFormatConditionProperty("DocsGrid", "Completed_Flag", "Comp", "ApplyToRow", "True")
+
+
+Gui.F_DocsView.ggcDocs.AddStyleFormatCondition("DocsGrid", "Completed_Flag", "InComp", "Equal", "False")
+Gui.F_DocsView.ggcDocs.SetStyleFormatConditionProperty("DocsGrid", "Completed_Flag", "InComp", "BackColor", "Red")
+Gui.F_DocsView.ggcDocs.SetStyleFormatConditionProperty("DocsGrid", "Completed_Flag", "InComp", "ApplyToRow", "True")
+
+Gui.F_DocsView.ggcDocs.MainView("DocsGrid")
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("GridProperties_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_EmpTraining.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(f_login_unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.GridProperties.End
+
+Program.Sub.cmdEmp_Click.Start
+F.Intrinsic.Control.SetErrorHandler("cmdEmp_Click_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local..BulkDeclareString(sError, sRet, sSup)
+
+'Making sure the Warning Label is hidden if they input a different name and clearing the Password
+Gui.F_Login.txtPass.Text("")
+Gui.F_Login.lblWarning.Visible(False)
+
+'Mini browser mode 50 to select an employee
+F.Intrinsic.UI.MiniBrowser(50, "", V.Local.sRet)
+
+F.Intrinsic.Control.If(V.Local.sRet, <>, "***CANCEL***")
+	F.Intrinsic.String.Split(V.Local.sRet, "*!*", V.Local.sRet)
+	Gui.F_Login.txtEmp.Text(V.Local.sRet(1).trim)
+F.Intrinsic.Control.Else
+	Gui.F_Login.txtEmp.Text("")
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("cmdEmp_Click_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_EmpTraining.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(f_login_unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.cmdEmp_Click.End
+
+Program.Sub.Comments.Start
+${$0$}$$}$$}$12:00:00 AM$}$False
+Program.Sub.Comments.End
