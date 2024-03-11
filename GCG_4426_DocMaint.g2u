@@ -1,0 +1,515 @@
+Program.Sub.ScreenSU.Start
+Gui.F_DocMaint..Create
+Gui.F_DocMaint..Size(10410,10380)
+Gui.F_DocMaint..MinX(0)
+Gui.F_DocMaint..MinY(0)
+Gui.F_DocMaint..Position(0,0)
+Gui.F_DocMaint..BackColor(-2147483633)
+Gui.F_DocMaint..MousePointer(0)
+Gui.F_DocMaint..Caption("ISO and Quality training Document Maintenance")
+Gui.F_DocMaint..Event(UnLoad,Unload)
+Gui.F_DocMaint.ggcDocs.Create(GsGridControl)
+Gui.F_DocMaint.ggcDocs.Size(9780,6945)
+Gui.F_DocMaint.ggcDocs.Position(180,2250)
+Gui.F_DocMaint.ggcDocs.Event(RowCellClick,ggcDocs_RowCellClick)
+Gui.F_DocMaint.ddlCat.Create(DropDownList)
+Gui.F_DocMaint.ddlCat.Size(1665,330)
+Gui.F_DocMaint.ddlCat.Position(255,450)
+Gui.F_DocMaint.ddlCat.Event(Change,ddlCat_Change)
+Gui.F_DocMaint.ddlCat.Event(Click,ddlCat_Change)
+Gui.F_DocMaint.txtDocTitle.Create(TextBox,"",True,2490,300,0,255,1125,True,0,"Arial",8,-2147483643,1)
+Gui.F_DocMaint.txtDocTitle.MaxLength(15)
+Gui.F_DocMaint.txtDocRev.Create(TextBox,"",True,1035,300,0,2865,1125,True,0,"Arial",8,-2147483643,1)
+Gui.F_DocMaint.txtDocRev.MaxLength(10)
+Gui.F_DocMaint.txtFileDir.Create(TextBox,"",True,5115,300,0,255,1815,True,0,"Arial",8,-2147483643,1)
+Gui.F_DocMaint.txtFileDir.MaxLength(50)
+Gui.F_DocMaint.cmdFileBrowse.Create(Button)
+Gui.F_DocMaint.cmdFileBrowse.Size(375,375)
+Gui.F_DocMaint.cmdFileBrowse.Position(5445,1755)
+Gui.F_DocMaint.cmdFileBrowse.Caption("^")
+Gui.F_DocMaint.cmdFileBrowse.Event(Click,cmdFileBrowse_Click)
+Gui.F_DocMaint.cmdSave.Create(Button)
+Gui.F_DocMaint.cmdSave.Size(975,375)
+Gui.F_DocMaint.cmdSave.Position(8955,9375)
+Gui.F_DocMaint.cmdSave.Caption("Save")
+Gui.F_DocMaint.cmdSave.Event(Click,cmdSave_Click)
+Gui.F_DocMaint.lbl1.Create(Label,"Category/Subject",True,1530,255,0,300,255,True,0,"Arial",8,-2147483633,0)
+Gui.F_DocMaint.lbl2.Create(Label,"Title",True,1935,255,0,300,930,True,0,"Arial",8,-2147483633,0)
+Gui.F_DocMaint.lbl3.Create(Label,"Rev",True,465,255,0,2850,930,True,0,"Arial",8,-2147483633,0)
+Gui.F_DocMaint.lbl4.Create(Label,"File",True,1935,255,0,300,1620,True,0,"Arial",8,-2147483633,0)
+Gui.F_DocMaint.cmdAdd.Create(Button)
+Gui.F_DocMaint.cmdAdd.Size(975,375)
+Gui.F_DocMaint.cmdAdd.Position(8820,1770)
+Gui.F_DocMaint.cmdAdd.Caption("Add")
+Gui.F_DocMaint.cmdAdd.Event(Click,cmdAdd_Click)
+Gui.F_DocMaint.txtDesc.Create(TextBox,"",True,5685,300,0,4110,1125,True,0,"Arial",8,-2147483643,1)
+Gui.F_DocMaint.lbl5.Create(Label,"Description",True,2490,255,0,4140,930,True,0,"Arial",8,-2147483633,0)
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+V.Global.iID.Declare(Long)
+
+Program.Sub.Preflight.End
+
+Program.Sub.ddlCat_Change.Start
+F.Intrinsic.Control.SetErrorHandler("ddlCat_Change_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local..BulkDeclareString(sError, sFilter)
+
+Gui.F_DocMaint.ggcDocs.SuspendLayout
+F.Data.DataView.Close("DocMaintTable", "DocView")
+
+'We are changing what the grid displays based on the category the employee selected
+F.Intrinsic.String.Build("CAT_ID = '{0}'", V.Dictionary.DicCatID![V.Screen.F_DocMaint!ddlCat.Text], V.Local.sFilter)
+F.Data.DataView.Create("DocMaintTable", "DocView", 22, V.Local.sFilter, "DOC_ID ASC")
+
+F.Intrinsic.Control.CallSub(GenGrid)
+
+Gui.F_DocMaint.ggcDocs.ResumeLayout
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("ddlCat_Change_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_DocMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.ddlCat_Change.End
+
+Program.Sub.txtDocTitle_LostFocus.Start
+F.Intrinsic.Control.SetErrorHandler("txtDocTitle_LostFocus_Err")
+F.Intrinsic.Control.ClearErrors
+
+'This subroutine is not currently in use, since the customer decided to expand the size of the revisions, the revisions are now unpredictable and we are no longer in charge of generating a new revision for the file
+V.Local..BulkDeclareString(sError, sSql, sRet)
+
+F.Intrinsic.Control.If(V.Screen.F_DocMaint!txtDocTitle.text.trim, <>, "")
+	F.Intrinsic.String.Build("Select TOP 1 DOC_REV from GCG_4426_DOCUMENTS where CAT_ID = '{0}' and DOC_TITLE = '{1}' ORDER BY DOC_REV ASC", V.Dictionary.DicCatID![V.Screen.F_DocMaint!ddlCat.Text], V.Screen.F_DocMaint!txtDocTitle.Text, V.Screen.F_DocMaint!txtDocRev.Text, V.Local.sSql)
+	F.ODBC.Connection!conx.ExecuteAndReturn(V.Local.sSql, V.Local.sRet)
+	F.Intrinsic.Control.If(V.Local.sRet, <>, "")
+		F.intrinsic.Math.Add(V.Local.sRet.Long, 1, V.Local.sRet)
+	F.Intrinsic.Control.Else
+		V.Local.sRet.Set(0)
+	F.Intrinsic.Control.EndIf
+	
+	F.Intrinsic.String.LPad(V.Local.sRet, "0", 3, V.Local.sRet)
+	
+	Gui.F_DocMaint.txtDocRev.Text(V.Local.sRet)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("txtDocTitle_LostFocus_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_DocMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(unload)
+Function.Intrinsic.Control.EndIf
+
+Program.Sub.txtDocTitle_LostFocus.End
+
+Program.Sub.cmdFileBrowse_Click.Start
+F.Intrinsic.Control.SetErrorHandler("cmdFileBrowse_Click_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+V.Local.sFile.Declare(String)
+
+'Generates file browser and prints the file path on the textbox if a file is selected
+F.Intrinsic.UI.ShowOpenFileDialog("", "*.*", "", V.Local.sFile)
+
+F.Intrinsic.Control.If(V.Local.sFile, <>, "***CANCEL***")
+	Gui.F_DocMaint.txtFileDir.Text(V.Local.sFile)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("cmdFileBrowse_Click_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_DocMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+Program.Sub.cmdFileBrowse_Click.End
+
+Program.Sub.cmdSave_Click.Start
+F.Intrinsic.Control.SetErrorHandler("cmdSave_Click_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+'saving modifications and reopening tables
+Gui.F_DocMaint..Enabled(False)
+
+F.Data.DataTable.SaveToDB("DocMaintTable", "conx", "GCG_4426_DOCUMENTS", "DOC_ID")
+
+F.Data.Dictionary.CreateFromDataTable("DeactDic", "DocMaintTable", "DOC_ID", "INACTIVE_FLAG")
+F.Data.Dictionary.SetDefaultReturn("DeactDic", "0")
+
+F.Data.DataTable.CreateFromSQL("EmpDocsTable", "conx", "Select * from GCG_4426_EMP_DOCS", True)
+F.Data.DataTable.FillFromDictionary("EmpDocsTable", "DeactDic", "DOC_ID", "DEACT")
+F.Data.Dictionary.Close("DeactDic")
+
+
+F.Data.DataTable.SaveToDB("EmpDocsTable", "conx", "GCG_4426_EMP_DOCS", "LINK_ID")
+
+F.Intrinsic.Control.CallSub("SendEmails")
+
+Gui.F_DocMaint.ggcDocs.SuspendLayout
+
+F.Data.DataTable.Close("EmpDocsTable")
+F.Data.DataTable.Close("DocMaintTable")
+F.Data.DataTable.Close("NewDocs")
+F.Data.DataTable.Close("EmpCatTable")
+F.Intrinsic.Control.CallSub(CreateTable)
+F.Intrinsic.Control.CallSub(GenGrid)
+F.Intrinsic.Control.CallSub(ddlCat_Change)
+
+Gui.F_DocMaint.ggcDocs.ResumeLayout
+
+Gui.F_DocMaint..Enabled(True)
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("cmdSave_Click_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_DocMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.cmdSave_Click.End
+
+Program.Sub.ggcDocs_RowCellClick.Start
+F.Intrinsic.Control.SetErrorHandler("ggcDocs_RowCellClick_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+V.Local.dInDate.Declare(Date)
+
+'Manually check and uncheck documents the customer clicks on
+F.Intrinsic.Control.SelectCase(V.Args.Column)
+F.Intrinsic.Control.Case("INACTIVE_FLAG")
+	F.Intrinsic.Date.DateComp(V.Ambient.Date, V.Local.dInDate)
+	F.Intrinsic.Control.If(V.DataTable.DocMaintTable(V.Args.RowHandle).INACTIVE_FLAG!FieldVal, =, "False")
+		F.Data.DataTable.SetValue("DocMaintTable", V.Args.RowHandle, "INACTIVE_FLAG", "True", "INACTIVE_DT", V.Local.dInDate, "INACTIVE_USER", V.Caller.User)
+	F.Intrinsic.Control.Else
+		F.Data.DataTable.SetValue("DocMaintTable", V.Args.RowHandle, "INACTIVE_FLAG", "False", "INACTIVE_DT", V.Local.dInDate, "INACTIVE_USER", V.Caller.User)	
+	F.Intrinsic.Control.EndIf
+F.Intrinsic.Control.EndSelect
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("ggcDocs_RowCellClick_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_DocMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.ggcDocs_RowCellClick.End
+
+Program.Sub.Main.Start
+F.Intrinsic.Control.SetErrorHandler("Main_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+'This is the Document maintenance for the ISO Quality Training documentation project for Tanis Incorporated. Employees will be able to add documents to a category, and attach the file location of them. 
+'If the document title is already in use, and the document has a different revision number, the project will automatically close previous sequences of that document title 
+F.ODBC.Connection!conx.OpenConnection(V.Ambient.PDSN, V.Ambient.PUser, V.Ambient.PPass)
+
+F.Intrinsic.Control.CallSub(GenForm)
+Gui.F_DocMaint..Show
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Main_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_DocMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.Main.End
+
+Program.Sub.cmdAdd_Click.Start
+F.Intrinsic.Control.SetErrorHandler("cmdAdd_Click_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local..BulkDeclareString(sError, sSql, sRet)
+V.Local..BulkDeclareLong(iCatID, iCount)
+V.Local.dCrDt.Declare(Date)
+
+'Adds document info to table
+F.Intrinsic.Control.If(V.Screen.F_DocMaint!ddlCat.Text, =, "")
+	F.Intrinsic.UI.MsgBox("Please select a category", "No category selected")
+	F.Intrinsic.Control.ExitSub
+F.Intrinsic.Control.ElseIf(V.Screen.F_DocMaint!txtDocTitle.Text, =, "")
+	F.Intrinsic.UI.MsgBox("Please provide a title for the document", "No title supplied")
+	F.Intrinsic.Control.ExitSub
+F.Intrinsic.Control.ElseIf(V.Screen.F_DocMaint!txtFileDir.Text, =, "")
+	F.Intrinsic.UI.MsgBox("Please provide the document", "No document selected")
+	F.Intrinsic.Control.ExitSub
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.String.Build("Select DOC_ID from GCG_4426_DOCUMENTS where CAT_ID = '{0}' and DOC_TITLE = '{1}' and DOC_REV = '{2}'", V.Dictionary.DicCatID![V.Screen.F_DocMaint!ddlCat.Text], V.Screen.F_DocMaint!txtDocTitle.Text.Trim, V.Screen.F_DocMaint!txtDocRev.Text, V.Local.sSql)
+F.ODBC.Connection!conx.ExecuteAndReturn(V.Local.sSql, V.Local.sRet)
+F.Intrinsic.Control.If(V.Local.sRet.Trim, <>, "")
+	F.Intrinsic.UI.Msgbox("Document and Rev already exist for this category.", "Need a new Revision number.")
+	F.Intrinsic.Control.ExitSub
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Math.Add(V.Global.iID, 1, V.Global.iID)
+F.Intrinsic.Date.DateComp(V.Ambient.Date, V.Local.dCrDt)
+V.Local.iCatID.Set(V.Dictionary.DicCatID![V.Screen.F_DocMaint!ddlCat.Text])
+
+F.Intrinsic.String.Build("[CAT_ID] = {0} and [DOC_TITLE] = '{1}' and [INACTIVE_FLAG] = 'False'", V.Local.iCatID, V.Screen.F_DocMaint!txtDocTitle.Text.Trim, V.Local.sSql)
+
+'Check for previous documents that are active and closes them
+F.Data.DataTable.Select("DocMaintTable", V.Local.sSql, V.Local.sRet)
+F.Intrinsic.Control.If(V.Local.sRet.Trim, <>, "***NORETURN***")
+	F.Intrinsic.String.Split(V.Local.sRet, "*!*", V.Local.sRet)
+	F.Intrinsic.Control.For(V.Local.iCount, 0, V.Local.sRet.UBound.--, 1)
+		F.Data.DataTable.SetValue("DocMaintTable", V.Local.sRet(V.Local.iCount), "INACTIVE_FLAG", "True", "INACTIVE_DT", V.Local.dCrDt, "INACTIVE_USER", V.Caller.User)
+		F.Data.DataTable.AddRow("NewDocs", "NewDocID", V.Global.iID, "Category", V.Local.iCatID, "DocTitle", V.Screen.F_DocMaint!txtDocTitle.Text.Trim, "Desc", V.Screen.F_DocMaint!txtDesc.Text, "Rev", V.Screen.F_DocMaint!txtDocRev.Text)
+	F.Intrinsic.Control.Next(V.Local.iCount)
+F.Intrinsic.Control.Else
+	F.Data.DataTable.AddRow("NewDocs", "NewDocID", V.Global.iID, "Category", V.Local.iCatID, "DocTitle", V.Screen.F_DocMaint!txtDocTitle.Text.Trim, "Desc", V.Screen.F_DocMaint!txtDesc.Text, "Rev", V.Screen.F_DocMaint!txtDocRev.Text)
+F.Intrinsic.Control.EndIf
+
+F.Data.DataTable.AddRow("DocMaintTable", "DOC_ID", V.Global.iID, "CAT_ID", V.Local.iCatID, "DOC_TITLE", V.Screen.F_DocMaint!txtDocTitle.Text.Trim, "DOC_REV", V.Screen.F_DocMaint!txtDocRev.Text, "DOC_DESCRIPTION", V.Screen.F_DocMaint!txtDesc.Text, "FILE_LOCATION", V.Screen.F_DocMaint!txtFileDir.Text, "CREATE_DT", V.Local.dCrDt, "CREATE_USER", V.Caller.User, "INACTIVE_FLAG", False)
+F.Intrinsic.Control.CallSub(ClearScreen)
+Gui.F_DocMaint.ggcDocs.MainView("DocGrid")
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("cmdAdd_Click_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_DocMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.cmdAdd_Click.End
+
+Program.Sub.GenForm.Start
+F.Intrinsic.Control.SetErrorHandler("GenForm_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+'Creating tables and dictionaries for Form
+F.Data.Dictionary.CreateFromSQL("DicCatName", "conx", "Select CAT_ID, CAT_NAME from GCG_4426_CATEGORIES where INACTIVE_FLAG = '0' order by CAT_ID")
+F.Data.Dictionary.SetDefaultReturn("DicCatName", -1)
+F.Data.Dictionary.CreateFromSQL("DicCatID", "conx", "Select CAT_NAME, CAT_ID from GCG_4426_CATEGORIES")
+F.Data.Dictionary.SetDefaultReturn("DicCatID", -1)
+
+Gui.F_DocMaint.ddlCat.AddItem("")
+Gui.F_DocMaint.ddlCat.AddItems("Dictionary", "DicCatName")
+
+F.Intrinsic.Control.CallSub(CreateTable)
+F.Intrinsic.Control.CallSub(GenGrid)
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("GenForm_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_DocMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.GenForm.End
+
+Program.Sub.Unload.Start
+F.Intrinsic.Control.SetErrorHandler("Unload_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+F.ODBC.Connection!conx.Close
+F.Intrinsic.Control.End
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Unload_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_DocMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+Program.Sub.Unload.End
+
+Program.Sub.GenGrid.Start
+F.Intrinsic.Control.SetErrorHandler("GenGrid_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+'Making the grid presentable
+Gui.F_DocMaint.ggcDocs.AddGridviewFromDataview("DocGrid", "DocMaintTable", "DocView")
+
+Gui.F_DocMaint.ggcDocs.SetColumnProperty("DocGrid", "CAT_ID", "Visible", False)
+Gui.F_DocMaint.ggcDocs.SetColumnProperty("DocGrid", "FILE_LOCATION", "Visible", False)
+Gui.F_DocMaint.ggcDocs.SetColumnProperty("DocGrid", "CREATE_DT", "Visible", False)
+Gui.F_DocMaint.ggcDocs.SetColumnProperty("DocGrid", "CREATE_USER", "Visible", False)
+Gui.F_DocMaint.ggcDocs.SetColumnProperty("DocGrid", "INACTIVE_DT", "Visible", False)
+Gui.F_DocMaint.ggcDocs.SetColumnProperty("DocGrid", "INACTIVE_USER", "Visible", False)
+Gui.F_DocMaint.ggcDocs.SetColumnProperty("DocGrid", "BIRUNID", "Visible", False)
+
+Gui.F_DocMaint.ggcDocs.SetColumnProperty("DocGrid", "DOC_ID", "AllowEdit", False)
+Gui.F_DocMaint.ggcDocs.SetColumnProperty("DocGrid", "DOC_TITLE", "AllowEdit", False)
+Gui.F_DocMaint.ggcDocs.SetColumnProperty("DocGrid", "DOC_REV", "AllowEdit", False)
+Gui.F_DocMaint.ggcDocs.SetColumnProperty("DocGrid", "DOC_DESCRIPTION", "AllowEdit", False)
+Gui.F_DocMaint.ggcDocs.SetColumnProperty("DocGrid", "INACTIVE_FLAG", "AllowEdit", True)
+
+Gui.F_DocMaint.ggcDocs.SetColumnProperty("DocGrid", "DOC_ID", "ReadOnly", True)
+Gui.F_DocMaint.ggcDocs.SetColumnProperty("DocGrid", "DOC_TITLE", "ReadOnly", True)
+Gui.F_DocMaint.ggcDocs.SetColumnProperty("DocGrid", "DOC_REV", "ReadOnly", True)
+Gui.F_DocMaint.ggcDocs.SetColumnProperty("DocGrid", "DOC_DESCRIPTION", "ReadOnly", True)
+Gui.F_DocMaint.ggcDocs.SetColumnProperty("DocGrid", "INACTIVE_FLAG", "ReadOnly", False)
+
+Gui.F_DocMaint.ggcDocs.SetColumnProperty("DocGrid", "DOC_ID", "Caption", "ID")
+Gui.F_DocMaint.ggcDocs.SetColumnProperty("DocGrid", "DOC_TITLE", "Caption", "Title")
+Gui.F_DocMaint.ggcDocs.SetColumnProperty("DocGrid", "DOC_REV", "Caption", "Rev")
+Gui.F_DocMaint.ggcDocs.SetColumnProperty("DocGrid", "DOC_DESCRIPTION", "Caption", "Description")
+Gui.F_DocMaint.ggcDocs.SetColumnProperty("DocGrid", "INACTIVE_FLAG", "Caption", "Inactive")
+
+Gui.F_DocMaint.ggcDocs.SetColumnProperty("DocGrid", "DOC_ID", "Width", "150")
+Gui.F_DocMaint.ggcDocs.SetColumnProperty("DocGrid", "DOC_TITLE", "Width", "750")
+Gui.F_DocMaint.ggcDocs.SetColumnProperty("DocGrid", "DOC_REV", "Width", "300")
+Gui.F_DocMaint.ggcDocs.SetColumnProperty("DocGrid", "DOC_DESCRIPTION", "Width", "4500")
+Gui.F_DocMaint.ggcDocs.SetColumnProperty("DocGrid", "INACTIVE_FLAG", "Width", "50")
+
+Gui.F_DocMaint.ggcDocs.MainView("DocGrid")
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("GenGrid_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_DocMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.GenGrid.End
+
+Program.Sub.ClearScreen.Start
+F.Intrinsic.Control.SetErrorHandler("ClearScreen_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+Gui.F_DocMaint.txtDesc.Text("")
+Gui.F_DocMaint.txtDocRev.Text("")
+Gui.F_DocMaint.txtDocTitle.Text("")
+Gui.F_DocMaint.txtFileDir.Text("")
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("ClearScreen_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_DocMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.ClearScreen.End
+
+Program.Sub.CreateTable.Start
+F.Intrinsic.Control.SetErrorHandler("CreateTable_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+'Creating main table
+F.Data.DataTable.CreateFromSQL("DocMaintTable", "conx", "Select * from GCG_4426_DOCUMENTS", True)
+F.Data.DataView.Create("DocMaintTable", "DocView", 22, "CAT_ID = '0'", "DOC_ID ASC")
+F.ODBC.Connection!conx.ExecuteAndReturn("Select TOP 1 DOC_ID from GCG_4426_DOCUMENTS order by DOC_ID Desc", V.Global.iID)
+
+F.Data.DataTable.Create("NewDocs", True)
+F.Data.DataTable.AddColumn("NewDocs", "Category", "Long")
+F.Data.DataTable.AddColumn("NewDocs", "NewDocID", "Long")
+F.Data.DataTable.AddColumn("NewDocs", "DocTitle", "String")
+F.Data.DataTable.AddColumn("NewDocs", "Rev", "String")
+F.Data.DataTable.AddColumn("NewDocs", "Desc", "String")
+
+'Collecting all employees that have categories assigned 
+F.Data.Datatable.CreateFromSQL("EmpCatTable", "conx", "Select distinct EMPLOYEE From GCG_4426_EMP_CATEG", True)
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("CreateTable_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_DocMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+Program.Sub.CreateTable.End
+
+Program.Sub.SendEmails.Start
+F.Intrinsic.Control.SetErrorHandler("SendEmails")
+F.Intrinsic.Control.ClearErrors
+
+V.Local..BulkDeclareString(sError, sRet, sCatID, sSql, sFilter, sIntro, sMeat, sBody, sEmail, sEmpEmail, sSender, sRecepient)
+V.Local..BulkDeclareLong(iCount, iUser)
+
+F.Data.Dictionary.ReturnAllPairs("DicCatName", V.Local.sRet)
+
+F.Intrinsic.String.Split(V.Local.sRet, "!*!", V.Local.sRet)
+F.Intrinsic.String.Split(V.Local.sRet(0), "*!*", V.Local.sCatID)
+
+'Dictionary text will have a line for each new document that was created
+F.Data.Dictionary.Create("Text")
+F.Data.Dictionary.SetDefaultReturn("Text", "")
+
+F.Intrinsic.Control.For(V.Local.iCount, 0, V.Local.sCatID.UBound.--, 1)
+	F.Intrinsic.String.Build("[Category] = '{0}'", V.Local.sCatID(V.Local.iCount), V.Local.sFilter)
+	F.Data.DataView.Create("NewDocs", "Temp", 22,  V.Local.sFilter, "NewDocID ASC")
+	F.Data.DataView.ToString("NewDocs", "Temp", "DocTitle*!*Rev*!*Desc", ", ", V.Ambient.NewLine, V.Local.sRet)
+	F.Data.Dictionary.AddItem("Text", V.Local.sCatID(V.Local.iCount), V.Local.sRet)	
+	F.Data.DataView.Close("NewDocs", "Temp")
+F.Intrinsic.Control.Next(V.Local.iCount)
+
+F.Global.Security.GetUserId(V.Caller.User, V.Caller.CompanyCode, V.Local.iUser)
+F.Global.Security.GetUserEmail(V.Caller.User, V.Caller.CompanyCode, V.Local.sEmail)
+
+F.Intrinsic.String.Build("{0}*!*{1}", V.Local.sEmail, V.Caller.User, V.Local.sSender)
+
+F.Intrinsic.String.Build("This email is to inform you that the following ISO training documentation is now available to complete:{0}{0}", V.Ambient.NewLine, V.Local.sIntro)
+
+'We then determine, per employee, which document they will need to complete and concatonate that line into the body of the email we will be sending them
+F.Intrinsic.Control.For(V.Local.iCount, 0, V.DataTable.EmpCatTable.RowCount--, 1)
+	V.Local.sMeat.Set("")
+	V.Local.sEmpEmail.Set("")
+	V.Local.sRecepient.Set("")
+	F.Intrinsic.String.Build("Select EMPLOYEE, CAT_ID from GCG_4426_EMP_CATEG where EMPLOYEE = '{0}'", V.DataTable.EmpCatTable(V.Local.iCount).EMPLOYEE!FieldValTrim, V.Local.sSql)
+	F.Data.DataTable.CreateFromSQL("MeatTemp", "conx", V.Local.sSql)
+	F.Data.DataTable.AddColumn("MeatTemp", "Line", "String")
+	F.Data.DataTable.FillFromDictionary("MeatTemp", "Text", "CAT_ID", "Line")
+	F.Data.DataView.Create("MeatTemp", "MeatTempView", 22, "[Line] <> ''", "CAT_ID ASC")
+	F.Data.DataView.ToString("MeatTemp", "MeatTempView", "Line", "", V.Ambient.NewLine, V.Local.sMeat)
+	F.Intrinsic.Control.If(V.Local.sMeat, <>, "")
+		F.Intrinsic.String.Build("Select EMAIL_ADDR from EMPLOYEE_MSTR where EMPLOYEE = '{0}'", V.DataTable.EmpCatTable(V.Local.iCount).EMPLOYEE!FieldValTrim, V.Local.sSql)
+		F.ODBC.Connection!conx.ExecuteAndReturn(V.Local.sSql, V.Local.sRecepient)
+		F.Intrinsic.String.Split(V.Local.sRecepient, "*!*", V.Local.sRecepient)
+		V.Local.sSql.Redim(0,0)
+		F.Intrinsic.String.Split(V.Local.sRecepient(0), "@", V.Local.sSql)
+		F.Intrinsic.Control.If(V.Local.sSql.UBound, =, 1)
+			F.Intrinsic.String.Build("{0}{1}{2}{2}Please log in to the ISO training module to complete.", V.Local.sIntro, V.Local.sMeat, V.Ambient.NewLine, V.Local.sBody)
+			F.Global.Messaging.QueueMessage(V.Caller.CompanyCode, V.Local.iUser, "", "New Training Available", V.Local.sSender, V.Local.sRecepient.Trim, V.Local.sBody)
+		F.Intrinsic.Control.EndIf	
+	F.Intrinsic.Control.EndIf
+	F.Data.DataView.Close("MeatTemp", "MeatTempView")
+	F.Data.DataTable.Close("MeatTemp")
+F.Intrinsic.Control.Next(V.Local.iCount)
+
+F.Data.Dictionary.Close("Text")
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("SendEmails")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_DocMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(unload)
+Function.Intrinsic.Control.EndIf
+
+Program.Sub.SendEmails.End
+
+Program.Sub.Comments.Start
+${$0$}$$}$$}$12:00:00 AM$}$False
+Program.Sub.Comments.End
