@@ -1,0 +1,332 @@
+Program.Sub.ScreenSU.Start
+Gui.F_Main..Create
+Gui.F_Main..Caption("Employee Selection")
+Gui.F_Main..Size(5115,5730)
+Gui.F_Main..MinX(0)
+Gui.F_Main..MinY(0)
+Gui.F_Main..Position(0,0)
+Gui.F_Main..BackColor(-2147483633)
+Gui.F_Main..MousePointer(0)
+Gui.F_Main..Event(UnLoad,F_Main_UnLoad)
+Gui.F_Main.chkAll.Create(CheckBox)
+Gui.F_Main.chkAll.Size(2100,360)
+Gui.F_Main.chkAll.Position(240,4410)
+Gui.F_Main.chkAll.Caption("Print for all Employees")
+Gui.F_Main.txtFrom.Create(TextBox,"",True,1500,300,0,210,450,True,0,"Arial",8,-2147483643,1)
+Gui.F_Main.txtTo.Create(TextBox,"",True,1500,300,0,2625,450,True,0,"Arial",8,-2147483643,1)
+Gui.F_Main.ggcEmps.Create(GsGridControl)
+Gui.F_Main.ggcEmps.Size(4545,2880)
+Gui.F_Main.ggcEmps.Position(195,1485)
+Gui.F_Main.lblfrom.Create(Label,"From",True,900,255,0,195,195,True,0,"Arial",8,-2147483633,0)
+Gui.F_Main.lblTo.Create(Label,"To",True,990,255,0,2655,195,True,0,"Arial",8,-2147483633,0)
+Gui.F_Main.cmdFBrowser.Create(Button)
+Gui.F_Main.cmdFBrowser.Size(375,375)
+Gui.F_Main.cmdFBrowser.Position(1830,405)
+Gui.F_Main.cmdFBrowser.Caption("^")
+Gui.F_Main.cmdFBrowser.Event(Click,cmdFBrowser_Click)
+Gui.F_Main.cmdTBrowse.Create(Button)
+Gui.F_Main.cmdTBrowse.Size(375,375)
+Gui.F_Main.cmdTBrowse.Position(4230,405)
+Gui.F_Main.cmdTBrowse.Caption("^")
+Gui.F_Main.cmdTBrowse.Event(Click,cmdTBrowse_Click)
+Gui.F_Main.cmdAdd.Create(Button)
+Gui.F_Main.cmdAdd.Size(855,375)
+Gui.F_Main.cmdAdd.Position(3795,930)
+Gui.F_Main.cmdAdd.Caption("Add")
+Gui.F_Main.cmdAdd.Event(Click,cmdAdd_Click)
+Gui.F_Main.cmdDone.Create(Button)
+Gui.F_Main.cmdDone.Size(855,375)
+Gui.F_Main.cmdDone.Position(3840,4605)
+Gui.F_Main.cmdDone.Caption("Print")
+Gui.F_Main.cmdDone.Event(Click,cmdDone_Click)
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+F.Intrinsic.Control.SetErrorHandler("Main_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+'This is a preprocessor to the ISO Employee training report. We give them the option to select employees or print the report for all employees
+F.ODBC.Connection!conx.OpenConnection(V.Ambient.PDSN, V.Ambient.PUser, V.Ambient.PPass)
+
+F.Intrinsic.UI.SetBrowserHotTypeAhead(True)
+
+F.Data.Dictionary.CreateFromSQL("EmpDic", "conx", "Select EMPLOYEE, NAME from V_EMPLOYEE_MSTR Order By EMPLOYEE ASC")
+F.Data.Dictionary.SetDefaultReturn("EmpDic", "")
+
+F.Data.Dictionary.CreateFromSQL("NODic", "conx", "Select LTRIM(RTRIM(NAME)), EMPLOYEE from V_EMPLOYEE_MSTR Order By EMPLOYEE ASC")
+F.Data.Dictionary.SetDefaultReturn("NODic", "-1")
+
+Gui.F_Main.txtFrom.AddAutoCompleteItem("EmpDic", "Dictionary")
+Gui.F_Main.txtTo.AddAutoCompleteItem("EmpDic", "Dictionary")
+
+F.Data.DataTable.CreateFromSQL("Employees", "conx", "Select EMPLOYEE, NAME from V_EMPLOYEE_MSTR where EMPLOYEE = ''", True)
+F.Intrinsic.Control.CallSub(GridProperties)
+
+Gui.F_Main..Show
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Main_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_EmpISOPreProc.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(f_main_unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.Main.End
+
+Program.Sub.cmdFBrowser_Click.Start
+F.Intrinsic.Control.SetErrorHandler("cmdFBrowser_Click_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local..BulkDeclareString(serror, sTitles, sRet)
+V.Local.iWidths.Declare(Long)
+
+'Creates a browser for Employees and fills in textbox if an employee is selected
+F.Intrinsic.String.Split("Employee Number*!*Name", "*!*", V.Local.sTitles)
+F.Intrinsic.String.Split("250*!*1500", *!*, V.Local.iWidths)
+
+F.Intrinsic.UI.Browser("Employee Browser", "conx", "Select EMPLOYEE, NAME from V_EMPLOYEE_MSTR ORDER BY EMPLOYEE ASC", V.Local.sTitles, V.Local.iWidths, V.Local.sRet)
+F.Intrinsic.Control.If(V.Local.sRet, <>, "***CANCEL***")
+	F.Intrinsic.String.Split(V.Local.sRet, "*!*", V.Local.sRet)
+	Gui.F_Main.txtFrom.Text(V.Local.sRet(1))
+	Gui.F_Main.txtTo.Text(V.Local.sRet(1))
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("cmdFBrowser_Click_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_EmpISOPreProc.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+Program.Sub.cmdFBrowser_Click.End
+
+Program.Sub.cmdTBrowse_Click.Start
+F.Intrinsic.Control.SetErrorHandler("cmdTBrowse_Click_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local..BulkDeclareString(serror, sTitles, sRet)
+V.Local.iWidths.Declare(Long)
+
+'Similar to the other employee browser
+F.Intrinsic.Control.If(V.Screen.F_Main!txtFrom.text.trim, =, "")
+	F.Intrinsic.Control.CallSub(cmdFBrowser_Click)
+F.Intrinsic.Control.Else
+	F.Intrinsic.String.Split("Employee Number*!*Name", "*!*", V.Local.sTitles)
+	F.Intrinsic.String.Split("250*!*1500", *!*, V.Local.iWidths)
+	
+	F.Intrinsic.UI.Browser("Employee Browser", "conx", "Select EMPLOYEE, NAME from V_EMPLOYEE_MSTR ORDER BY EMPLOYEE ASC", V.Local.sTitles, V.Local.iWidths, V.Local.sRet)
+
+	F.Intrinsic.Control.If(V.Local.sRet, <>, "***CANCEL***")
+		F.Intrinsic.String.Split(V.Local.sRet, "*!*", V.Local.sRet)
+		Gui.F_Main.txtTo.Text(V.Local.sRet(1))
+	F.Intrinsic.Control.EndIf
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("cmdTBrowse_Click_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_EmpISOPreProc.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+Program.Sub.cmdTBrowse_Click.End
+
+Program.Sub.cmdAdd_Click.Start
+F.Intrinsic.Control.SetErrorHandler("cmdAdd_Click_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local..BulkDeclareString(sError, sSql, sFrom, sTo)
+
+'We add the range of employees to the grid displayed
+V.Local.sFrom.Set(V.Dictionary.NODic![V.Screen.F_Main!txtFrom.Text.Trim])
+V.Local.sTo.Set(V.Dictionary.NODic![V.Screen.F_Main!txtTo.Text.Trim])
+
+F.Intrinsic.Control.If(V.Local.sFrom, =, "-1", "OR", V.Local.sTo, =, "-1")
+	F.Intrinsic.UI.Msgbox("Employee not found", "Input Error")
+	Gui.F_Main.txtFrom.Text("")
+	Gui.F_Main.txtTo.Text("")
+	F.Intrinsic.Control.ExitSub
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.String.Build("Select EMPLOYEE, NAME from V_EMPLOYEE_MSTR Where EMPLOYEE between '{0}' and '{1}'", V.Local.sFrom, V.Local.sTo, V.Local.sSql)
+F.Data.DataTable.CreateFromSQL("Temp", "conx", V.Local.sSql, True)
+F.Data.DataTable.Merge("Employees", "Temp", True, 2)
+
+F.Data.DataView.Create("Temp", "TempView", 22)
+F.Data.DataTable.Close("Employees")
+
+'This guarantees we dont duplicate employees on the grid
+F.Data.DataView.ToDataTableDistinct("Temp", "TempView", "Employees", "EMPLOYEE*!*NAME", True)
+F.Data.Datatable.Close("Temp")
+
+F.Intrinsic.Control.CallSub(GridProperties)
+
+Gui.F_Main.txtFrom.Text("")
+Gui.F_Main.txtTo.Text("")
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("cmdAdd_Click_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_EmpISOPreProc.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(f_main_unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.cmdAdd_Click.End
+
+Program.Sub.cmdDone_Click.Start
+F.Intrinsic.Control.SetErrorHandler("cmdDone_Click_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+V.Local..BulkDeclareLong(iRunID, iLogID, iReptID)
+V.Local.dTod.Declare(Date)
+
+Gui.F_Main..Visible(False)
+
+F.ODBC.Connection!conx.Execute("Delete from GCG_4426_EMPPRINT")
+
+'Populates print table with employee data based on the user selection and prints the report on screen
+F.Global.BI.GetRunID(V.Local.iRunID)
+
+F.Global.BI.GetIDFromName("GCG_4426_EmpRpt.rpt", V.Local.iReptID)
+F.Global.BI.StartLogging(V.Local.iRunID, V.Local.iReptID, -1, "", V.Local.iLogID)
+
+F.Data.DataTable.CreateFromSQL("PrintTable", "conx", "Select * from GCG_4426_EMP_DOCS")
+F.Data.DataTable.CreateFromSQL("DocInfoTable", "conx", "Select * from GCG_4426_DOCUMENTS")
+
+F.Data.DataTable.AddColumn("PrintTable", "NAME", "String")
+F.Data.DataTable.FillFromDictionary("PrintTable", "EmpDic", "EMPLOYEE", "NAME")
+
+F.Data.Dictionary.CreateFromDataTable("TitleDic", "DocInfoTable", "DOC_ID", "DOC_TITLE")
+F.Data.Dictionary.SetDefaultReturn("TitleDic", "Not Found")
+F.Data.DataTable.AddColumn("PrintTable", "Title", "String")
+F.Data.DataTable.FillFromDictionary("PrintTable", "TitleDic", "DOC_ID", "Title")
+F.Data.Dictionary.Close("TitleDic")
+
+F.Data.Dictionary.CreateFromDataTable("REVDic", "DocInfoTable", "DOC_ID", "DOC_REV")
+F.Data.Dictionary.SetDefaultReturn("REVDic", "Not Found")
+F.Data.DataTable.AddColumn("PrintTable", "Rev", "String")
+F.Data.DataTable.FillFromDictionary("PrintTable", "REVDic", "DOC_ID", "Rev")
+F.Data.Dictionary.Close("REVDic")
+
+F.Data.Dictionary.CreateFromDataTable("DescriptionDic", "DocInfoTable", "DOC_ID", "DOC_DESCRIPTION")
+F.Data.Dictionary.SetDefaultReturn("DescriptionDic", "Not Found")
+F.Data.DataTable.AddColumn("PrintTable", "Description", "String")
+F.Data.DataTable.FillFromDictionary("PrintTable", "DescriptionDic", "DOC_ID", "Description")
+F.Data.Dictionary.Close("DescriptionDic")
+
+F.Data.Dictionary.CreateFromDataTable("RevDateDic", "DocInfoTable", "DOC_ID", "CREATE_DT")
+F.Data.Dictionary.SetDefaultReturn("RevDateDic", V.Ambient.Now.DateComp)
+F.Data.DataTable.AddColumn("PrintTable", "REV_DATE", "Date")
+F.Data.DataTable.FillFromDictionary("PrintTable", "RevDateDic", "DOC_ID", "REV_DATE")
+F.Data.Dictionary.Close("RevDateDic")
+
+F.Data.DataTable.AddColumn("PrintTable", "PrintFlag", "String")
+F.Intrinsic.Control.If(V.Screen.F_Main!chkAll.Value, =, 1)
+	F.Data.Datatable.SetValue("PrintTable", -1, "PrintFlag", "PRINT")
+F.Intrinsic.Control.Else
+	F.Data.Dictionary.CreateFromDataTable("PrintDic", "Employees", "EMPLOYEE", "EMPLOYEE")
+	F.Data.Dictionary.SetDefaultReturn("PrintDic", "")
+	F.Data.DataTable.FillFromDictionary("PrintTable", "PrintDic", "EMPLOYEE", "PrintFlag")
+	F.Data.Dictionary.Close("PrintDic")
+F.Intrinsic.Control.EndIf
+
+F.Data.DataView.Create("PrintTable", "PrintView", 22, "PrintFlag <> ''", "EMPLOYEE ASC")
+
+F.Data.DataView.ToDataTable("PrintTable", "PrintView", "ExportTable")
+
+F.Data.DataTable.CreateFromSQL("EmpInfoTable", "conx", "Select EMPLOYEE, DEPT_EMPLOYEE, DATE_TERMINATION from EMPLOYEE_MSTR")
+F.Data.Dictionary.CreatefromDataTable("DeptDic", "EmpInfoTable", "EMPLOYEE", "DEPT_EMPLOYEE")
+F.Data.Dictionary.SetDefaultReturn("DeptDic", "")
+F.Data.DataTable.AddColumn("ExportTable", "DEPT", "String")
+F.Data.DataTable.FillFromDictionary("ExportTable", "DeptDic", "EMPLOYEE", "DEPT")
+F.Data.Dictionary.Close("DeptDic")
+
+F.Data.Dictionary.CreatefromDataTable("TermDic", "EmpInfoTable", "EMPLOYEE", "DATE_TERMINATION")
+F.Data.Dictionary.SetDefaultReturn("TermDic", "")
+F.Data.DataTable.AddColumn("ExportTable", "TFlag", "String")
+F.Data.DataTable.FillFromDictionary("ExportTable", "TermDic", "EMPLOYEE", "TFlag")
+F.Data.Dictionary.Close("TermDic")
+
+F.Data.DataTable.AddExpressionColumn("ExportTable", "TERMINATE", "String", "IIF(TFlag = '000000', 'ACTIVE', 'INACTIVE')")
+'F.Data.DataTable.AddExpressionColumn("ExportTable", "COMPLETED", "String", "IIF(DATE_COMPLETED = null, 'Not Completed', DATE_COMPLETED)")
+
+F.Data.DataTable.AddColumn("ExportTable", "BIRUNID", "Long", V.Local.iRunID)
+
+F.Data.DataTable.SaveToDB("ExportTable", "conx", "GCG_4426_EMPPRINT", "LINK_ID", 128, "EMPLOYEE@!@EMPLOYEE*!*NAME@!@NAME*!*DOC_ID@!@DOC_ID*!*CAT_ID@!@CAT_ID*!*DATE_COMPLETED@!@DATE_COMPLETED*!*LINK_ID@!@LINK_ID*!*COMPLETED_FLAG@!@COMPLETED_FLAG*!*Title@!@DOC_TITLE*!*Rev@!@DOC_REV*!*Description@!@DOC_DESC*!*DEPT@!@DEPT*!*TERMINATE@!@TERMINATE*!*REV_DATE@!@REV_DATE*!*BIRUNID@!@BIRUNID")
+
+F.Global.BI.StopLogging(V.Local.iLogID)
+
+F.Global.BI.RunReportPreProcessor(V.Local.iRunID, V.Local.iLogID, "", "", "", 16, False, "", -1, "", -1, "", "", V.Local.iLogID)
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("cmdDone_Click_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_EmpISOPreProc.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(f_main_unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.cmdDone_Click.End
+
+Program.Sub.GridProperties.Start
+F.Intrinsic.Control.SetErrorHandler("GridProperties_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+'Prettifies grid
+Gui.F_Main.ggcEmps.AddGridviewFromDatatable("EmpGrid", "Employees")
+
+Gui.F_Main.ggcEmps.SetColumnProperty("EmpGrid", "EMPLOYEE", "ReadOnly", True)
+Gui.F_Main.ggcEmps.SetColumnProperty("EmpGrid", "NAME", "ReadOnly", True)
+
+Gui.F_Main.ggcEmps.SetColumnProperty("EmpGrid", "EMPLOYEE", "AllowEdit", False)
+Gui.F_Main.ggcEmps.SetColumnProperty("EmpGrid", "NAME", "AllowEdit", False)
+
+Gui.F_Main.ggcEmps.SetColumnProperty("EmpGrid", "EMPLOYEE", "Caption", "Emp Number")
+Gui.F_Main.ggcEmps.SetColumnProperty("EmpGrid", "NAME", "Caption", "Name")
+
+Gui.F_Main.ggcEmps.SetColumnProperty("EmpGrid", "EMPLOYEE", "Width", 500)
+Gui.F_Main.ggcEmps.SetColumnProperty("EmpGrid", "NAME", "Width", 3000)
+
+Gui.F_Main.ggcEmps.MainView("EmpGrid")
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("GridProperties_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_EmpISOPreProc.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(f_main_unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.GridProperties.End
+
+Program.Sub.F_Main_UnLoad.Start
+F.Intrinsic.Control.SetErrorHandler("F_Main_UnLoad_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+F.ODBC.Connection!conx.Close
+F.Intrinsic.Control.End
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("F_Main_UnLoad_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_EmpISOPreProc.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+Program.Sub.F_Main_UnLoad.End
+
+Program.Sub.Comments.Start
+${$0$}$$}$$}$12:00:00 AM$}$False
+Program.Sub.Comments.End
