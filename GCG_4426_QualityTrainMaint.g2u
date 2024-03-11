@@ -1,0 +1,241 @@
+Program.Sub.ScreenSU.Start
+Gui.F_CatMaint..Create
+Gui.F_CatMaint..Caption("Category Maintenance")
+Gui.F_CatMaint..Size(9735,9000)
+Gui.F_CatMaint..MinX(0)
+Gui.F_CatMaint..MinY(0)
+Gui.F_CatMaint..Position(0,0)
+Gui.F_CatMaint..BackColor(-2147483633)
+Gui.F_CatMaint..MousePointer(0)
+Gui.F_CatMaint..Event(UnLoad,Unload)
+Gui.F_CatMaint.ggcCategory.Create(GsGridControl)
+Gui.F_CatMaint.ggcCategory.Size(9225,6720)
+Gui.F_CatMaint.ggcCategory.Position(165,990)
+Gui.F_CatMaint.ggcCategory.Event(RowCellClick,ggcContMaint_RowCellClick)
+Gui.F_CatMaint.txtCatMaint.Create(TextBox,"",True,1215,300,0,300,495,True,0,"Arial",8,-2147483643,1)
+Gui.F_CatMaint.txtCatMaint.MaxLength(15)
+Gui.F_CatMaint.txtDesc.Create(TextBox,"",True,3660,300,0,1830,495,True,0,"Arial",8,-2147483643,1)
+Gui.F_CatMaint.txtDesc.MaxLength(50)
+Gui.F_CatMaint.cmdAdd.Create(Button)
+Gui.F_CatMaint.cmdAdd.Size(855,375)
+Gui.F_CatMaint.cmdAdd.Position(5850,450)
+Gui.F_CatMaint.cmdAdd.Caption("Add")
+Gui.F_CatMaint.cmdAdd.Event(Click,cmdCatMaintAdd_Click)
+Gui.F_CatMaint.lblDesc.Create(Label,"Description",True,1935,255,0,1830,300,True,0,"Arial",8,-2147483633,0)
+Gui.F_CatMaint.lblCatName.Create(Label,"Category",True,1500,255,0,300,300,True,0,"Arial",8,-2147483633,0)
+Gui.F_CatMaint.cmdSave.Create(Button)
+Gui.F_CatMaint.cmdSave.Size(1110,375)
+Gui.F_CatMaint.cmdSave.Position(8250,7845)
+Gui.F_CatMaint.cmdSave.Caption("Save")
+Gui.F_CatMaint.cmdSave.Event(Click,cmdSave_Click)
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+V.Global.iID.Declare(Long)
+Program.Sub.Preflight.End
+
+Program.Sub.cmdCatMaintAdd_Click.Start
+F.Intrinsic.Control.SetErrorHandler("cmdCatMaintAdd_Click_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local..BulkDeclareString(sError, sSql, sRet)
+V.Local..BulkDeclareDate(dCrDt, dInact)
+
+'Add new Category to the list of categories.
+F.Intrinsic.Control.If(V.Screen.F_CatMaint!txtCatMaint.Text.Trim, =, "")
+	F.Intrinsic.UI.Msgbox("Please enter in a Category", "Category textbox is blank")
+	F.Intrinsic.Control.ExitSub
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Screen.F_CatMaint!txtDesc.Text.Trim, =, "")
+	F.Intrinsic.UI.Msgbox("Please enter in a Description", "Description textbox is blank")
+	F.Intrinsic.Control.ExitSub
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.String.Build("Select * from GCG_4426_Categories where CAT_NAME = '{0}'", V.Screen.F_CatMaint!txtCatMaint.Text.Trim, V.Local.sSql)
+F.ODBC.Connection!conx.ExecuteAndReturn(V.Local.sSql, V.Local.sRet)
+F.Intrinsic.Control.If(V.Local.sRet.Trim, <>, "")
+	F.Intrinsic.UI.Msgbox("Category name already in use!", "Enter new Category Name")
+	F.Intrinsic.Control.CallSub(ClearScreen)
+	F.Intrinsic.Control.ExitSub
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Date.DateComp(V.Ambient.Date, V.Local.dCrDt)
+F.Intrinsic.Math.Add(V.Global.iID, 1, V.Global.iID)
+
+F.Data.DataTable.AddRow("CatTable", "CAT_ID", V.Global.iID, "CAT_NAME", V.Screen.F_CatMaint!txtCatMaint.Text.Trim, "CAT_DESC", V.Screen.F_CatMaint!txtDesc.Text.Trim, "CREATE_DT",  V.Local.dCrDt.PervasiveDate, "CREATE_USER", V.Caller.User, "INACTIVE_FLAG", False)
+F.Intrinsic.Control.CallSub(ClearScreen)
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("cmdCatMaintAdd_Click_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_QualityTrainMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.cmdCatMaintAdd_Click.End
+
+Program.Sub.ggcContMaint_RowCellClick.Start
+F.Intrinsic.Control.SetErrorHandler("ggcContMaint_RowCellClick_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+V.Local.dInDate.Declare(Date)
+
+'Setting flags if the user Activates/deactivates category
+F.Intrinsic.Control.SelectCase(V.Args.Column)
+F.Intrinsic.Control.Case("INACTIVE_FLAG")
+	F.Intrinsic.Date.DateComp(V.Ambient.Date, V.Local.dInDate)
+	F.Intrinsic.Control.If(V.DataTable.CatTable(V.Args.RowHandle).INACTIVE_FLAG!FieldVal, =, "False")
+		F.Data.DataTable.SetValue("CatTable", V.Args.RowHandle, "INACTIVE_FLAG", "True", "INACT_DT", V.Local.dInDate.PervasiveDate, "INACT_USER", V.Caller.User)
+	F.Intrinsic.Control.Else
+		F.Data.DataTable.SetValue("CatTable", V.Args.RowHandle, "INACTIVE_FLAG", "False", "INACT_DT", V.Local.dInDate.PervasiveDate, "INACT_USER", V.Caller.User)	
+	F.Intrinsic.Control.EndIf
+F.Intrinsic.Control.EndSelect
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("ggcContMaint_RowCellClick_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_QualityTrainMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.ggcContMaint_RowCellClick.End
+
+Program.Sub.cmdSave_Click.Start
+F.Intrinsic.Control.SetErrorHandler("cmdSave_Click_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+F.Data.DataTable.SaveToDB("CatTable", "conx", "GCG_4426_Categories", "CAT_ID", 256, "CAT_ID@!@CAT_ID*!*CAT_NAME@!@CAT_NAME*!*CAT_DESC@!@CAT_DESC*!*INACTIVE_FLAG@!@INACTIVE_FLAG*!*CREATE_DT@!@CREATE_DT*!*CREATE_USER@!@CREATE_USER*!*INACT_DT@!@INACT_DT*!*INACT_USER@!@INACT_USER")
+
+Gui.F_CatMaint.ggcCategory.SuspendLayout
+
+F.Data.DataTable.Close(CatTable)
+F.Intrinsic.Control.CallSub(GenForm)
+
+Gui.F_CatMaint.ggcCategory.ResumeLayout
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("cmdSave_Click_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_QualityTrainMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.cmdSave_Click.End
+
+Program.Sub.Main.Start
+F.Intrinsic.Control.SetErrorHandler("Main_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+F.ODBC.Connection!conx.OpenConnection(V.Ambient.PDSN, V.Ambient.PUser, V.Ambient.PPass)
+'This is the  category maintenance program for the ISO Quality Training documentation project for Tanis Incorporated.
+F.Intrinsic.Control.CallSub(GenForm)
+Gui.F_CatMaint..Show
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Main_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_QualityTrainMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.Main.End
+
+Program.Sub.GenForm.Start
+F.Intrinsic.Control.SetErrorHandler("GenForm_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+'Create the table and display it
+F.Data.DataTable.CreateFromSQL("CatTable", "conx", "Select * from GCG_4426_Categories ORDER BY CAT_ID Asc", True)
+F.ODBC.Connection!conx.ExecuteAndReturn("Select TOP 1 CAT_ID from GCG_4426_Categories ORDER BY CAT_ID Desc", V.Global.iID)
+
+Gui.F_CatMaint.ggcCategory.AddGridviewFromDatatable("CatGrid", "CatTable")
+
+'Prettify the grid
+Gui.F_CatMaint.ggcCategory.SetColumnProperty("CatGrid", "CREATE_DT", "Visible", False)
+Gui.F_CatMaint.ggcCategory.SetColumnProperty("CatGrid", "CREATE_USER", "Visible", False)
+Gui.F_CatMaint.ggcCategory.SetColumnProperty("CatGrid", "INACT_DT", "Visible", False)
+Gui.F_CatMaint.ggcCategory.SetColumnProperty("CatGrid", "INACT_USER", "Visible", False)
+
+Gui.F_CatMaint.ggcCategory.SetColumnProperty("CatGrid", "CAT_ID", "AllowEdit", False)
+Gui.F_CatMaint.ggcCategory.SetColumnProperty("CatGrid", "CAT_NAME", "AllowEdit", False)
+Gui.F_CatMaint.ggcCategory.SetColumnProperty("CatGrid", "CAT_DESC", "AllowEdit", False)
+Gui.F_CatMaint.ggcCategory.SetColumnProperty("CatGrid", "INACTIVE_FLAG", "AllowEdit", False)
+
+Gui.F_CatMaint.ggcCategory.SetColumnProperty("CatGrid", "CAT_ID", "ReadOnly", True)
+Gui.F_CatMaint.ggcCategory.SetColumnProperty("CatGrid", "CAT_NAME", "ReadOnly", True)
+Gui.F_CatMaint.ggcCategory.SetColumnProperty("CatGrid", "CAT_DESC", "ReadOnly", True)
+Gui.F_CatMaint.ggcCategory.SetColumnProperty("CatGrid", "INACTIVE_FLAG", "ReadOnly", True)
+
+Gui.F_CatMaint.ggcCategory.SetColumnProperty("CatGrid", "CAT_ID", "Caption", "ID")
+Gui.F_CatMaint.ggcCategory.SetColumnProperty("CatGrid", "CAT_NAME", "Caption", "Category")
+Gui.F_CatMaint.ggcCategory.SetColumnProperty("CatGrid", "CAT_DESC", "Caption", "Description")
+Gui.F_CatMaint.ggcCategory.SetColumnProperty("CatGrid", "INACTIVE_FLAG", "Caption", "Inactive")
+
+Gui.F_CatMaint.ggcCategory.SetColumnProperty("CatGrid", "CAT_ID", "Width", "150")
+Gui.F_CatMaint.ggcCategory.SetColumnProperty("CatGrid", "CAT_NAME", "Width", "750")
+Gui.F_CatMaint.ggcCategory.SetColumnProperty("CatGrid", "CAT_DESC", "Width", "5000")
+Gui.F_CatMaint.ggcCategory.SetColumnProperty("CatGrid", "INACTIVE_FLAG", "Width", "50")
+
+Gui.F_CatMaint.ggcCategory.MainView("CatGrid")
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("GenForm_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_QualityTrainMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.GenForm.End
+
+Program.Sub.Unload.Start
+F.Intrinsic.Control.SetErrorHandler("Unload_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+F.ODBC.Connection!conx.Close
+F.Intrinsic.Control.End
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Unload_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_QualityTrainMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+Program.Sub.Unload.End
+
+Program.Sub.ClearScreen.Start
+F.Intrinsic.Control.SetErrorHandler("Unload_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+Gui.F_CatMaint.txtCatMaint.Text("")
+Gui.F_CatMaint.txtDesc.Text("")
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Unload_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4426_QualityTrainMaint.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(unload)
+Function.Intrinsic.Control.EndIf
+Program.Sub.ClearScreen.End
+
+Program.Sub.Comments.Start
+${$0$}$$}$$}$12:00:00 AM$}$False
+Program.Sub.Comments.End
